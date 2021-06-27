@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Amaze UI Admin index Examples</title>
+    <meta name="description" content="这是一个 index 页面">
+    <meta name="keywords" content="index">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <link rel="icon" type="image/png" href="/i/favicon.png">
+    <link rel="apple-touch-icon-precomposed" href="/i/app-icon72x72@2x.png">
+    <meta name="apple-mobile-web-app-title" content="Amaze UI"/>
+    <link rel="stylesheet" href="/css/amazeui.min.css"/>
+    <link rel="stylesheet" href="/css/admin.css">
+    <link rel="stylesheet" href="/css/app.css">
+</head>
+
+<body data-type="login">
+<div id="login" class="am-g myapp-login">
+    <div class="myapp-login-logo-block  tpl-login-max">
+        <div class="myapp-login-logo-text">
+            <div class="myapp-login-logo-text">
+                CAPP SYSTEM<span> 注册</span> <i class="am-icon-skyatlas"></i>
+
+            </div>
+        </div>
+
+        <div class="login-font">
+            <i @click="refresh">注册 </i> or <span @click="logIn"> 登录</span>
+        </div>
+        <div class="am-u-sm-10 signIn-am-center">
+            <form class="am-form">
+                <fieldset>
+                    <div class="am-form-group am-form-icon am-form-feedback" v-bind:class="[usernameAmFormSuccess,usernameAmFormError]">
+                        <p><input type="text" class="" id="doc-ipt-username-1" placeholder="输入账号/手机号/邮箱" v-model='username' @keyup="checkUsername"></p>
+                        <span class="am-icon-check" v-if="usernameAmFormSuccess=='am-form-success'"></span>
+                        <span class="am-icon-times" v-if="usernameAmFormError=='am-form-error'"></span>
+                    </div>
+                    <div class="am-form-group am-form-icon am-form-feedback" v-bind:class="[passwordAmFormSuccess,passwordAmFormError,passwordAmFormWarning]">
+                        <p><input type="password" class="" id="doc-ipt-pwd-1" placeholder="输入密码" v-model='password' @blur="checkPassword" @keyup="checkPasswordCheck"></p>
+                        <span class="am-icon-check" v-if="passwordAmFormSuccess=='am-form-success'"></span>
+                        <span class="am-icon-times" v-if="passwordAmFormError=='am-form-error'"></span>
+                        <span class="am-icon-warning" v-if="passwordAmFormWarning=='am-form-warning'"></span>
+                    </div>
+                    <div class="am-form-group am-form-icon am-form-feedback" v-bind:class="[passwordCheckAmFormSuccess,passwordCheckAmFormError]" >
+                        <p><input type="password" class="" id="doc-ipt-pwd-2" placeholder="确认密码" v-model='passwordCheck' @keyup="checkPasswordCheck"></p>
+                        <span class="am-icon-check" v-if="passwordCheckAmFormSuccess=='am-form-success'"></span>
+                        <span class="am-icon-times" v-if="passwordCheckAmFormError=='am-form-error'"></span>
+                    </div>
+                    <div class="am-form-group am-form-icon am-form-feedback" v-bind:class="[employeeIdAmFormSuccess,employeeIdAmFormError]">
+                        <p><input type="text" class="" id="doc-ipt-employeeId-1" placeholder="输入工号" v-model='employeeId' @keyup="checkEmployeeId"></p>
+                        <span class="am-icon-check" v-if="employeeIdAmFormSuccess=='am-form-success'"></span>
+                        <span class="am-icon-times" v-if="employeeIdAmFormError=='am-form-error'"></span>
+                    </div>
+                    <div class="am-form-group am-form-icon am-form-feedback" v-bind:class="[phoneAmFormSuccess,phoneAmFormError]">
+                        <p><input type="text" class="" id="doc-ipt-phone-1" placeholder="输入手机号" v-model='phone' @keyup="checkPhone" ></p>
+                        <span class="am-icon-check" v-if="phoneAmFormSuccess=='am-form-success'"></span>
+                        <span class="am-icon-times" v-if="phoneAmFormError=='am-form-error'"></span>
+                    </div>
+                    <div class="am-form-group am-form-icon am-form-feedback" v-bind:class="[emailAmFormSuccess,emailAmFormError]">
+                        <p><input type="text" class="" id="doc-ipt-email-1" placeholder="输入邮箱" v-model='email' @blur="checkEmail" ></p>
+                        <span class="am-icon-check" v-if="emailAmFormSuccess=='am-form-success'"></span>
+                        <span class="am-icon-times" v-if="emailAmFormError=='am-form-error'"></span>
+                    </div>
+                    <p style="height: 50px"> </p>
+                    <p>
+                        <button type="button" class="am-btn am-btn-default" @click="signIn">注册</button>
+                    </p>
+
+                </fieldset>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+<script src="/js/jquery.min.js"></script>
+<script src="/js/amazeui.min.js"></script>
+<script src="/js/app.js"></script>
+<script src="/js/axios.min.js"></script>
+<script type="text/javascript" src="/js/vue.min.js"></script>
+
+
+
+
+<script type="text/javascript">
+    function sleep(ms) {
+        return new Promise(resolve =>
+            setTimeout(resolve, ms)
+        )
+    }
+
+    /**
+     * 获取url中的参数的方法
+     * @param variable
+     * @returns {string|boolean}
+     */
+    function getQueryVariable(variable)
+    {
+        var query = window.location.search.substring(1);
+        var vars = query.split("&");
+        for (var i=0;i<vars.length;i++) {
+            var pair = vars[i].split("=");
+            if(pair[0] == variable){return pair[1];}
+        }
+        return(false);
+    }
+    var vm = new Vue({
+        el: '#login', //id选择上面的app div
+        data: {
+            username: '',
+            usernameAmFormSuccess:'',
+            usernameAmFormError:'',
+            usernameCheckStatus:'',
+
+            password: '',
+            passwordAmFormSuccess:'',
+            passwordAmFormError:'',
+            passwordAmFormWarning:'',
+
+            passwordCheck: '',
+            passwordCheckAmFormSuccess:'',
+            passwordCheckAmFormError:'',
+
+
+            employeeId: '',
+            employeeIdAmFormSuccess:'',
+            employeeIdAmFormError:'',
+            employeeIdCheckStatus:'',
+
+            phone: '',
+            phoneAmFormSuccess:'',
+            phoneAmFormError:'',
+
+            email: '',
+            emailAmFormSuccess:'',
+            emailAmFormError:''
+        },
+        methods: { //写方法
+            //事件函数的参数传递
+            signIn: function () {
+
+                if ((this.checkPassword() == "success") && (this.checkPasswordCheck() == "success") && (this.checkPhone() == "success") &&(this.checkEmail() == "success") && (this.employeeIdCheckStatus == "success") && (this.usernameCheckStatus == "success")) {
+                    //用户名和工号放在后端进行验证
+                    axios.post('http://passport.capp.com:7000/signIn/signIn', {
+                        username: this.username,
+                        password: this.password,
+                        phone: this.phone,
+                        employeeId: this.employeeId,
+                        email: this.email
+                    }).then(function (ret) {
+                        if (ret.data == "fail") {
+                            //注册失败
+                            alert("注册失败")
+                            return;
+                        }
+                        //身份认证成功
+                       // window.location.href = $("#returnUrl").val()+ "?token=" + token;
+                        window.location.href = "http://passport.capp.com:7000/passport/index";
+                    })
+                    return;
+                }
+                else{
+
+                    return;
+
+                }
+
+
+            },
+            refresh:function () {
+                window.location.reload();
+            },
+            logIn:function () {
+                console.log(getQueryVariable("returnUrl"))
+                window.location.href = "http://passport.capp.com:7000/passport/index?returnUrl="+getQueryVariable("returnUrl");
+            },
+            checkUsername:function () {
+                var that = this;
+                //用户名长度不得小于6个字符
+                if (this.username.length<6 || this.username.length>14){
+                    this.usernameAmFormError='am-form-error';
+                    this.usernameAmFormSuccess='';
+                    this.usernameCheckStatus = "fail";
+                    return;
+                }
+
+
+                //发送到后端进行验证，查看是否有重名
+                axios.post('http://passport.capp.com:7000/signIn/checkUsername', {
+                    username: this.username
+                }).then(function (ret) {
+                    if (ret.data == "success"){
+                        that.usernameAmFormError='';
+                        that.usernameAmFormSuccess='am-form-success';
+                        that.usernameCheckStatus = "success";
+                    }
+                    else {
+                        that.usernameAmFormError='am-form-error';
+                        that.usernameAmFormSuccess='';
+                        that.usernameCheckStatus = "fail";
+                    }
+                })
+            },
+            checkPassword:function () {
+                //密码长度太小或太长,error
+                if(this.password.length<8||this.password.length>14){
+                    this.passwordAmFormSuccess='';
+                    this.passwordAmFormWarning='';
+                    this.passwordAmFormError='am-form-error';
+                    return "fail";
+                }
+                //密码只包含数字,字母或特殊符号,error
+                var regPasswordLow = /^(?:\d+|[a-zA-Z]+|[!@#$%^&*]+)$/;
+                //密码是字母+数字，字母+特殊字符，数字+特殊字符,warning
+                var regPasswordMedium = /^(?![a-zA-z]+$)(?!\d+$)(?![!@#$%^&*=]+$)[a-zA-Z\d!@#$%^&*=]+$/;
+                //密码是字母+数字+特殊字符
+                var regPasswordHigh = /^(?![a-zA-z]+$)(?!\d+$)(?![!@#$%^&*=]+$)(?![a-zA-z\d]+$)(?![a-zA-z!@#$%^&*=]+$)(?![\d!@#$%^&*=]+$)[a-zA-Z\d!@#$%^&*=]+$/;
+
+
+                if (regPasswordHigh.test(this.password)){
+                    this.passwordAmFormSuccess='am-form-success';
+                    this.passwordAmFormWarning='';
+                    this.passwordAmFormError='';
+                    return "success";
+                }
+                else if (regPasswordMedium.test(this.password)){
+                    this.passwordAmFormSuccess='';
+                    this.passwordAmFormWarning='am-form-warning';
+                    this.passwordAmFormError='';
+                    return "success";
+                }
+                else if (regPasswordLow.test(this.password)){
+                    this.passwordAmFormSuccess='';
+                    this.passwordAmFormWarning='';
+                    this.passwordAmFormError='am-form-error';
+                    return "fail";
+                }
+                else {
+                    this.passwordAmFormSuccess='';
+                    this.passwordAmFormWarning='';
+                    this.passwordAmFormError='am-form-error';
+                    return "fail";
+                }
+            },
+            checkPasswordCheck:function () {
+
+                if (this.passwordCheck.length == 0){//还没有输入
+                    this.passwordCheckAmFormSuccess='';
+                    this.passwordCheckAmFormError='';
+                    return "fail"
+                }
+                if(this.passwordCheck == this.password && this.checkPassword() == "success"){
+                    console.log("aaa")
+                    this.passwordCheckAmFormSuccess='am-form-success';
+                    this.passwordCheckAmFormError='';
+                    return "success";
+                }
+                else {
+                    console.log("bbb")
+                    this.passwordCheckAmFormSuccess='';
+                    this.passwordCheckAmFormError='am-form-error';
+                    return "fail";
+                }
+
+            },
+            checkEmployeeId:function () {
+                var that = this;
+                var regcheckEmployeeId = /^[0-9]{7}$/;
+                //长度校验,纯数字校验
+                if (this.employeeId.length<7||this.employeeId.length>7 || !regcheckEmployeeId.test(this.employeeId)){
+                    this.employeeIdAmFormSuccess='';
+                    this.employeeIdAmFormError='am-form-error';
+                    this.employeeIdCheckStatus ="fail";
+                    return;
+                }
+
+                //查看是否已经注册
+                //发送到后端进行验证，查看是否有重名
+                axios.post('http://passport.capp.com:7000/signIn/checkEmployeeId', {
+                    employeeId: this.employeeId
+                }).then(function (ret) {
+                    if (ret.data == "success"){
+                        that.employeeIdAmFormError='';
+                        that.employeeIdAmFormSuccess='am-form-success';
+                        that.employeeIdCheckStatus ="success";
+                    }
+                    else {
+                        that.employeeIdAmFormError='am-form-error';
+                        that.employeeIdFormSuccess='';
+                        that.employeeIdCheckStatus ="fail";
+                    }
+                })
+            },
+            checkPhone:function () {
+                var regPhone=reg = /^1(3[0-9]|4[5,7]|5[0,1,2,3,5,6,7,8,9]|6[2,5,6,7]|7[0,1,7,8]|8[0-9]|9[1,8,9])\d{8}$/;
+                if (regPhone.test(this.phone)){
+                    this.phoneAmFormSuccess='am-form-success';
+                    this.phoneAmFormError='';
+                    return "success";
+                }
+                else{
+                    this.phoneAmFormSuccess='';
+                    this.phoneAmFormError='am-form-error';
+                    return "fail";
+                }
+            },
+            checkEmail:function () {
+                var regEmail = /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/;
+                if (regEmail.test(this.email)){
+                    this.emailAmFormSuccess='am-form-success';
+                    this.emailAmFormError='';
+                    return "success";
+                }
+                else {
+                    this.emailAmFormSuccess='';
+                    this.emailAmFormError='am-form-error';
+                    return "fail";
+                }
+            }
+        }
+
+    });
+</script>
+
+
+</body>
+
+</html>

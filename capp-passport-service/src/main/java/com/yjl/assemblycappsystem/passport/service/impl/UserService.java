@@ -1,5 +1,6 @@
 package com.yjl.assemblycappsystem.passport.service.impl;
 
+import com.alibaba.dubbo.config.annotation.Service;
 import com.alibaba.fastjson.JSON;
 import com.yjl.assemblycappsystem.util.ActiveMQUtil;
 import com.yjl.assemblycappsystem.util.RedisUtil;
@@ -33,6 +34,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
+@Service
 public class UserService implements com.yjl.assemblycappsystem.service.UserService {
     @Autowired
     RedisUtil redisUtil;

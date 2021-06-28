@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yjl.assemblycappsystem.manage.mapper.DmsProcessDocumentMapper">
+
+    <select id="selectAllProcessDocuments" resultMap="selectAllProcessDocumentsMap"><!--LIMIT #{start},#{end}-->
+        SELECT * FROM dms_process_document d LEFT JOIN ums_user_info u ON d.upload_user_id = u.id
+    </select>
+
+    <!--<select></select>返回的 resultMap  在此处进行封装-->
+    <!--type属性表示要转换成的对象-->
+    <resultMap id="selectAllProcessDocumentsMap" type="com.yjl.assemblycappsystem.bean.DmsProcessDocument" autoMapping="true">
+        <!--result标签 告诉mybatis哪个是要转换的对象的id列(主键)-->
+        <result column="id" property="id"></result>
+
+        <!--collection用来表示一对多的关系，association用来表示一对一的关系-->
+        <!--这里使用association-->
+        <association property="umsUserInfo" javaType="com.yjl.assemblycappsystem.bean.UmsUserInfo"
+                    autoMapping="true">
+            <!--result标签 告诉mybatis哪个是 要转换的对象中的属性的哪个 的id列(主键)-->
+            <result column="upload_user_id" property="id"></result>
+        </association>
+    </resultMap>
+
+</mapper>

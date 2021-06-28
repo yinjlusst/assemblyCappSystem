@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="ch" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Amaze UI Admin index Examples</title>
+    <meta name="description" content="这是一个 index 页面">
+    <meta name="keywords" content="index">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <link rel="icon" type="image/png" href="/i/favicon.png">
+    <link rel="apple-touch-icon-precomposed" href="/i/app-icon72x72@2x.png">
+    <meta name="apple-mobile-web-app-title" content="Amaze UI" />
+    <!-- Theme style -->
+    <link rel="stylesheet" href="/css/adminlte.min.css">
+
+    <link rel="stylesheet" href="/css/amazeui.min.css" />
+    <link rel="stylesheet" href="/css/admin.css">
+    <link rel="stylesheet" href="/css/app.css">
+
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="/css/all.min.css">
+    <!-- DataTables -->
+    <link rel="stylesheet" href="/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="/css/responsive.bootstrap4.min.css">
+    <link rel="stylesheet" href="/css/buttons.bootstrap4.min.css">
+
+</head>
+
+<body data-type="generalComponents">
+
+
+<header class="am-topbar am-topbar-inverse admin-header">
+    <div id="topNavigationBar" th:include="topNavigationBar"></div>
+</header>
+
+<div class="tpl-page-container tpl-page-header-fixed">
+    <div id="leftNavigationBar" th:include="leftNavigationBar"></div>
+
+    <div class="tpl-content-wrapper" id="app">
+        <div class="tpl-content-page-title">
+            用户基本信息
+        </div>
+        <ol class="am-breadcrumb">
+            <li><a href="#" class="am-icon-home">首页</a></li>
+            <li><a href="#">用户管理</a></li>
+            <li class="am-active">用户基本信息</li>
+        </ol>
+        <div class="tpl-portlet-components">
+            <div class="portlet-title">
+                <div class="caption font-green bold">
+                    <span class="am-icon-code"></span> 用户基本信息表
+                </div>
+                <div class="tpl-portlet-input tpl-fz-ml">
+                    <div class="portlet-input input-small-yjl input-inline">
+                        <div class="input-icon right">
+                            <i class="am-icon-search" ></i>
+                            <input type="text" class="form-control form-control-solid" placeholder="按用户名或工号搜索，可用逗号分隔" v-model="searchUserInfo" @click = "searchUser">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="tpl-block">
+
+                <div class="card-body">
+                    <table id="example2" class="table table-bordered table-hover">
+                        <thead>
+                        <tr>
+                            <th>工号</th>
+                            <th>用户名</th>
+                            <th>邮箱</th>
+                            <th>手机号</th>
+                            <th>上次登陆时间</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>1659235</td>
+                            <td>yinjianliang
+                            </td>
+                            <td>841728139@qq.com</td>
+                            <td>13522226595</td>
+                            <td>2021-05-20</td>
+                        </tr>
+                        <tr>
+                            <td>2115923</td>
+                            <td>dili
+                            </td>
+                            <td>965037962@qq.com</td>
+                            <td>13296482652</td>
+                            <td>2021-06-03</td>
+                        </tr>
+                        <tr>
+                            <td>3185325</td>
+                            <td>Internet
+                            </td>
+                            <td>965089662@qq.com</td>
+                            <td>13296452652</td>
+                            <td>2021-06-01</td>
+                        </tr>
+
+                        <tr>
+                            <td>Trident</td>
+                            <td>AOL browser (AOL desktop)</td>
+                            <td>Win XP</td>
+                            <td>6</td>
+                            <td>A</td>
+                        </tr>
+                        <tr>
+                            <td>Gecko</td>
+                            <td>Firefox 1.0</td>
+                            <td>Win 98+ / OSX.2+</td>
+                            <td>1.7</td>
+                            <td>A</td>
+                        </tr>
+                        <tr>
+                            <td>Gecko</td>
+                            <td>Firefox 1.5</td>
+                            <td>Win 98+ / OSX.2+</td>
+                            <td>1.8</td>
+                            <td>A</td>
+                        </tr>
+                        <tr>
+                            <td>Gecko</td>
+                            <td>Firefox 2.0</td>
+                            <td>Win 98+ / OSX.2+</td>
+                            <td>1.8</td>
+                            <td>A</td>
+                        </tr>
+                        <tr>
+                            <td>Gecko</td>
+                            <td>Firefox 3.0</td>
+                            <td>Win 2k+ / OSX.3+</td>
+                            <td>1.9</td>
+                            <td>A</td>
+                        </tr>
+                        <tr>
+                            <td>Gecko</td>
+                            <td>Camino 1.0</td>
+                            <td>OSX.2+</td>
+                            <td>1.8</td>
+                            <td>A</td>
+                        </tr>
+                        <tr>
+                            <td>Webkit</td>
+                            <td>Safari 2.0</td>
+                            <td>OSX.4+</td>
+                            <td>419.3</td>
+                            <td>A</td>
+                        </tr>
+                        <tr>
+                            <td>Webkit</td>
+                            <td>Safari 3.0</td>
+                            <td>OSX.4+</td>
+                            <td>522.1</td>
+                            <td>A</td>
+                        </tr>
+                        <tr>
+                            <td>Webkit</td>
+                            <td>OmniWeb 5.5</td>
+                            <td>OSX.4+</td>
+                            <td>420</td>
+                            <td>A</td>
+                        </tr>
+                        <tr>
+                            <td>Webkit</td>
+                            <td>iPod Touch / iPhone</td>
+                            <td>iPod</td>
+                            <td>420.1</td>
+                            <td>A</td>
+                        </tr>
+                        <tr>
+                            <td>Webkit</td>
+                            <td>S60</td>
+                            <td>S60</td>
+                            <td>413</td>
+                            <td>A</td>
+                        </tr>
+                        <tr>
+                            <td>Presto</td>
+                            <td>Opera 7.0</td>
+                            <td>Win 95+ / OSX.1+</td>
+                            <td>-</td>
+                            <td>A</td>
+                        </tr>
+                        <tr>
+                            <td>Presto</td>
+                            <td>Opera 7.5</td>
+                            <td>Win 95+ / OSX.2+</td>
+                            <td>-</td>
+                            <td>A</td>
+                        </tr>
+                        <tr>
+                            <td>Presto</td>
+                            <td>Opera 8.0</td>
+                            <td>Win 95+ / OSX.2+</td>
+                            <td>-</td>
+                            <td>A</td>
+                        </tr>
+                        <tr>
+                            <td>Presto</td>
+                            <td>Opera 8.5</td>
+                            <td>Win 95+ / OSX.2+</td>
+                            <td>-</td>
+                            <td>A</td>
+                        </tr>
+                        <tr>
+                            <td>Presto</td>
+                            <td>Opera 9.0</td>
+                            <td>Win 95+ / OSX.3+</td>
+                            <td>-</td>
+                            <td>A</td>
+                        </tr>
+                        <tr>
+                            <td>Presto</td>
+                            <td>Opera 9.2</td>
+                            <td>Win 88+ / OSX.3+</td>
+                            <td>-</td>
+                            <td>A</td>
+                        </tr>
+                        <tr>
+                            <td>Presto</td>
+                            <td>Opera 9.5</td>
+                            <td>Win 88+ / OSX.3+</td>
+                            <td>-</td>
+                            <td>A</td>
+                        </tr>
+                        <tr>
+                            <td>Presto</td>
+                            <td>Opera for Wii</td>
+                            <td>Wii</td>
+                            <td>-</td>
+                            <td>A</td>
+                        </tr>
+                        <tr>
+                            <td>Presto</td>
+                            <td>Nokia N800</td>
+                            <td>N800</td>
+                            <td>-</td>
+                            <td>A</td>
+                        </tr>
+                        <tr>
+                            <td>Presto</td>
+                            <td>Nintendo DS browser</td>
+                            <td>Nintendo DS</td>
+                            <td>8.5</td>
+                            <td>C/A<sup>1</sup></td>
+                        </tr>
+                        <tr>
+                            <td>KHTML</td>
+                            <td>Konqureror 3.1</td>
+                            <td>KDE 3.1</td>
+                            <td>3.1</td>
+                            <td>C</td>
+                        </tr>
+                        <tr>
+                            <td>KHTML</td>
+                            <td>Konqureror 3.3</td>
+                            <td>KDE 3.3</td>
+                            <td>3.3</td>
+                            <td>A</td>
+                        </tr>
+                        <tr>
+                            <td>KHTML</td>
+                            <td>Konqureror 3.5</td>
+                            <td>KDE 3.5</td>
+                            <td>3.5</td>
+                            <td>A</td>
+                        </tr>
+                        <tr>
+                            <td>Tasman</td>
+                            <td>Internet Explorer 4.5</td>
+                            <td>Mac OS 8-9</td>
+                            <td>-</td>
+                            <td>X</td>
+                        </tr>
+                        <tr>
+                            <td>Tasman</td>
+                            <td>Internet Explorer 5.1</td>
+                            <td>Mac OS 7.6-9</td>
+                            <td>1</td>
+                            <td>C</td>
+                        </tr>
+                        <tr>
+                            <td>Tasman</td>
+                            <td>Internet Explorer 5.2</td>
+                            <td>Mac OS 8-X</td>
+                            <td>1</td>
+                            <td>C</td>
+                        </tr>
+                        <tr>
+                            <td>Misc</td>
+                            <td>NetFront 3.1</td>
+                            <td>Embedded devices</td>
+                            <td>-</td>
+                            <td>C</td>
+                        </tr>
+                        <tr>
+                            <td>Misc</td>
+                            <td>NetFront 3.4</td>
+                            <td>Embedded devices</td>
+                            <td>-</td>
+                            <td>A</td>
+                        </tr>
+                        <tr>
+                            <td>Misc</td>
+                            <td>Dillo 0.8</td>
+                            <td>Embedded devices</td>
+                            <td>-</td>
+                            <td>X</td>
+                        </tr>
+                        <tr>
+                            <td>Misc</td>
+                            <td>Links</td>
+                            <td>Text only</td>
+                            <td>-</td>
+                            <td>X</td>
+                        </tr>
+                        <tr>
+                            <td>Misc</td>
+                            <td>Lynx</td>
+                            <td>Text only</td>
+                            <td>-</td>
+                            <td>X</td>
+                        </tr>
+                        <tr>
+                            <td>Misc</td>
+                            <td>IE Mobile</td>
+                            <td>Windows Mobile 6</td>
+                            <td>-</td>
+                            <td>C</td>
+                        </tr>
+                        <tr>
+                            <td>Misc</td>
+                            <td>PSP browser</td>
+                            <td>PSP</td>
+                            <td>-</td>
+                            <td>C</td>
+                        </tr>
+                        <tr>
+                            <td>Other browsers</td>
+                            <td>All others</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>U</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="tpl-alert"></div>
+        </div>
+
+
+    </div>
+</div>
+
+
+</body>
+</html>
+
+
+<script src="/js/jquery.min.js"></script>
+<script src="/js/amazeui.min.js"></script>
+<script src="/js/iscroll.js"></script>
+<script src="/js/app.js"></script>
+<script src="/js/axios.min.js"></script>
+<script src="/js/vue.min.js"></script>
+<script src="/js/echarts.min.js"></script>
+
+
+
+
+
+<!-- jQuery -->
+<!-- Bootstrap 4 -->
+<script src="/js/bootstrap.bundle.min.js"></script>
+<!-- DataTables  & Plugins -->
+<script src="/js/jquery.dataTables.min.js"></script>
+<script src="/js/dataTables.bootstrap4.min.js"></script>
+<script src="/js/dataTables.responsive.min.js"></script>
+<script src="/js/responsive.bootstrap4.min.js"></script>
+<script src="/js/dataTables.buttons.min.js"></script>
+<script src="/js/buttons.bootstrap4.min.js"></script>
+<script src="/js/jszip.min.js"></script>
+<script src="/js/pdfmake.min.js"></script>
+<script src="/js/vfs_fonts.js"></script>
+<script src="/js/buttons.html5.min.js"></script>
+<script src="/js/buttons.print.min.js"></script>
+<script src="/js/buttons.colVis.min.js"></script>
+<!-- AdminLTE App -->
+<script src="/js/adminlte.min.js"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="/js/demo.js"></script>
+<!-- Page specific script -->
+<script>
+    $(function () {
+        $("#example1").DataTable({
+            "responsive": true, "lengthChange": false, "autoWidth": false,
+            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+        }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+        $('#example2').DataTable({
+            "paging": true,
+            "lengthChange": false,
+            "searching": false,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false,
+            "responsive": true,
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    var vm = new Vue({
+        el: '#app', //id选择上面的app div
+        data: {
+            allPages: 10,//总页数
+            currentPage : 1,//当前页数
+            rowInOnePage: 10 ,//一页显式条数
+            searchUserInfo:""//要搜索的用户的信息
+        },
+        mounted:function() {
+            //获取用户列表
+            axios.get('http://manage.capp.com:7001/userList/getUserList?currentPage=1&rowInOnePage=10', {
+            }).then(function (ret) {
+
+            })
+        },
+        methods:{
+            //按照员工的用户名或者工号进行搜索
+            searchUser:function(){
+                if (this.searchUserInfo == ""){
+                    return;
+                }
+                axios.get('http://manage.capp.com:7001/processManage/getSearchUsers', {
+                    params:{
+                        searchInfo : this.searchUserInfo,
+                        currentPage : this.currentPage,
+                        rowInOnePage : this.rowInOnePage
+                    }
+                }).then(function (ret) {
+                    if (ret.data == null){
+                        alert("查询无效");
+                        return;
+                    }
+                    alert(ret.data);
+
+                })
+            },
+            changeActive:function (name) {
+                this.indexActive = false;
+                this.userManageActive=false;
+                this.userManageBasicInfoActive=false;
+                this.userManageAddInfoActive=false;
+                this.userManageAuthActive=false;
+                this.threeDimensionBrowser=false;
+                if(name == "indexActive"){
+                    this.indexActive = true;
+                }else if(name == "userManageBasicInfoActive"){
+                    this.userManageActive=true;
+                    this.userManageBasicInfoActive=true;
+                }else if(name == "userManageAddInfoActive"){
+                    this.userManageActive=true;
+                    this.userManageAddInfoActive=true;
+                }else if(name=="userManageAuthActive"){
+                    this.userManageActive=true;
+                    this.userManageAuthActive=true;
+                }else if(name="threeDimensionBrowser"){
+                    this.threeDimensionBrowser=true;
+                }
+            },
+            changeUserManageDisplay:function () {
+                if(this.userManageDisplay == "none"){
+                    this.userManageDisplay = "block";
+                }else {
+                    this.userManageDisplay = "none";
+                }
+
+            }
+        }
+    });
+</script>
+
+
+
+

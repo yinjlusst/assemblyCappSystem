@@ -1,0 +1,1112 @@
+<!-- SView3.0接口测试页面 -->
+<HTML>
+<HEAD>
+    <meta charset="utf-8">
+    <TITLE>SView3.0接口测试页面 </TITLE>
+	<script language="javascript" type="text/javascript">
+
+
+
+		//更改控件尺寸
+		function resize() { 
+			document.getElementById("SViewOCX").width = document.body.clientWidth  - 10;
+			document.getElementById("SViewOCX").height= document.body.clientHeight - 120;
+		}
+		//Open打开
+		function Onclick1(obj) {
+			SViewOCX.Open("http://localhost:8088/testSVL/creo2m100.prt.1.svl");
+			SViewOCX.Show();
+		}
+		//更改背景
+		function Onclick2(obj) {
+			if(obj.value=="更改背景1"){
+				SViewOCX.BackgroundColor = 16777215;
+				obj.value='更改背景2';
+			}else{
+				SViewOCX.BackgroundColor = 12615680;
+				obj.value='更改背景1';
+			}
+			SViewOCX.View = "俯视图";
+		}
+		//打开工具栏
+		function Onclick3(obj) {
+			if(obj.value=="打开工具栏"){
+				obj.value='关闭工具栏';
+				SViewOCX.ShowToolbar="1";
+			}else{
+				obj.value='打开工具栏';
+				SViewOCX.ShowToolbar="0";
+			}
+		}
+		//打开装配板
+		function Onclick4(obj) {
+			if(obj.value=="打开装配板"){
+				obj.value='关闭装配板';
+				SViewOCX.ShowAssemblyPanel="1";
+			}else{
+				obj.value='打开装配板';
+				SViewOCX.ShowAssemblyPanel="0";
+			}
+		}
+		//导出BOM
+		function Onclick7() {
+			rtncode = SViewOCX.ExportBOM("D:\\SViewBOM.xml");
+		}
+		//显隐模型
+		function Onclick8(obj) {
+			if(obj.value=="显示模型"){
+				obj.value='隐藏模型';
+				SViewOCX.SetModelVisibility("PATH|0|1",1);
+			}else{
+				obj.value='显示模型';
+				SViewOCX.SetModelVisibility("PATH|0|1",0);
+			}
+		}
+		//获取选择的模型
+		function Onclick9() {
+			rtncode = SViewOCX.GetSelectedModels();
+			if(rtncode!=null && rtncode!=""){
+				alert(rtncode);
+			}else{
+				alert("先指定BOM结点！");
+			}
+		}
+		//显示模式:0--着色 1--边着色 2--线框 3--网格 5--半透明
+		function Onclick18() {			
+			SViewOCX.DisplayMode = document.getElementById("a0").value;
+		}
+		
+		//设置模型颜色
+		function Onclick19() {
+			SViewOCX.SetModelColor(0x0000ff, "PATH|0");
+		}
+		//根据名称设置模型颜色
+		function Onclick20() {
+			SViewOCX.SetModelColorByName(1234567, "bolt");
+		}
+		//动画
+		function Onclick21() {
+			SViewOCX.Play(0);
+		}
+		function Onclick22(obj) {
+			if(obj.value=="循环播放"){
+				obj.value='取消循环播放';
+				SViewOCX.Play(1);
+			}else{
+				obj.value='循环播放';
+				SViewOCX.Play(5);
+			}
+		}
+		function Onclick23(obj) {
+			if(obj.value=="播放"){
+				obj.value='暂停';
+				SViewOCX.Play(2);
+			}else{
+				obj.value='播放';
+				SViewOCX.Play(3);
+			}
+		}
+		function Onclick24() {
+			SViewOCX.Play(3);
+		}
+		function Onclick25() {
+			SViewOCX.Play(4);
+		}
+		function Onclick26() {			
+			SViewOCX.ModelView = document.getElementById("a1").value;
+		}
+		function getUrl(file) {
+			if (file.indexOf(":") > 0)
+				return file;
+			var loc = self.location.href.toLowerCase();            
+			var start = 0;
+			if (loc.indexOf("file:///") >= 0)
+				start = 8;
+			var length = loc.lastIndexOf("/");
+			var url = loc.substr(start, length - start + 1);
+			var dir = url + file; 
+			return dir;
+		}
+		
+		function showSVL() {
+			if (!document.getElementById("path").value)
+				alert("请输入要打开的文件！");
+			else
+			{
+				var dir = getUrl(document.getElementById("path").value);
+				//alert("打开文件：" + dir);
+				//SViewOCX.Open(dir);
+				//SViewOCX.Show();
+                                SViewOCX.Src=dir;
+			}  
+		}
+		
+		function Onclick27(obj) {
+			SViewOCX.CreateNote(document.getElementById("a2").value);
+		}
+		
+		function Onclick28() {
+			SViewOCX.OpenNoteFile("G:\\svlxx\\678\\sdsdsdddddd.asm.10", "王三");
+		}
+		function Onclick29() {
+		 SViewOCX.ShowNoteGroup("G:\\svlxx\\678\\sdsdsdddddd.asm.10",false);
+		}
+		function Onclick30() {
+			SViewOCX.SetActiveNoteGroup("G:\svlxx\678\sdsdsdddddd.asm.10");
+		}
+		function Onclick31() {    
+			SViewOCX.SetToolBarItemEnable("ChangeHightlight", false);
+			SViewOCX.SetToolBarItemEnable("BackGroundColor", false);
+			SViewOCX.SetToolBarItemEnable("ButtonRotate", false);
+			SViewOCX.SetToolBarItemEnable("UserNoteLineCreate", false);
+			SViewOCX.SetToolBarItemEnable("UserNoteNoLineCreate", false);
+			SViewOCX.SetToolBarItemEnable("UserNotePcreateLineCreate", false);
+			SViewOCX.SetToolBarItemEnable("UserNotePcreateNoLineCreate", false);
+			SViewOCX.SetToolBarItemEnable("UserNoteFixCreate", false);
+			SViewOCX.SetToolBarItemEnable("UserNoteSave", false);
+			SViewOCX.SetToolBarItemEnable("UserNoteOpen", false);
+		}
+		function Onclick32() {
+			SViewOCX.RemoveNoteGroup("G:\\svlxx\\678\\sdsdsdddddd.asm.10");
+		}
+		function Onclick33() {
+			SViewOCX.SetUserInfo("oooo", "研发", "开发");
+		}
+		function Onclick34(obj) {
+			if(obj.value=="显示包围盒"){
+				obj.value='隐藏包围盒';
+				SViewOCX.ShowBox(true);
+			}else{
+				obj.value='显示包围盒';
+				SViewOCX.ShowBox(false);
+			}
+		}
+		function Onclick35()
+		{
+			var volValue = SViewOCX.GetVolume();
+			alert(volValue);
+		}
+		function Onclick36()
+		{
+			var boxValue = SViewOCX.GetBox();
+			alert(boxValue);
+		}
+		function Onclick37()
+		{
+		    var boxValue = SViewOCX.DeleteModelbyId("PATH|0|1");
+			alert(boxValue);
+		}
+		function Onclick38() {
+		    var boxValue = SViewOCX.DeleteModelbyId("PATH|0|10");
+		    alert(boxValue);
+		}
+		function Onclick39() {
+		    var boxValue = SViewOCX.DeleteModelbyId("PATH|0|a");
+		    alert(boxValue);
+		}
+		function Onclick40() {
+		    var boxValue = SViewOCX.DeleteModelbyId("PATH|0|c|1");
+		    alert(boxValue);
+		}
+		function Onclick41()
+		{
+		    var boxValue = SViewOCX.SetObjLinkVisible("PATH|0",true);
+			alert(boxValue);
+		}
+		function Onclick42() {
+		    var boxValue = SViewOCX.SetObjLinkVisible("PATH|0|2", false);
+		    alert(boxValue);
+		}
+		function OnclickGetInstanceIDByNameTemp() {
+		    var boxValue = SViewOCX.GetInstanceIDByName("DPUB-02542-XAX-J60-5100100_01(1)|DPUB-04251-XAX-J60-5101010_00(1)|DPUB-03977-XAX-J60-5101011_00(1)");
+		    alert(boxValue);
+		}		
+		
+		function OnclickGetInstanceIDByNameTemp1() {
+		    var boxValue = SViewOCX.GetInstanceIDByName("DPUB-02542-XAX-J60-5100100_01(1)|DPUB-04251-XAX-J60-5101010_00(1)|DPUB-03977-XAX-J60(1)");
+		    alert(boxValue);
+		}
+		function OnclickAboutBox() {
+		    var boxValue = SViewOCX.AboutBox();
+		}
+		//添加模型
+		function Onclick43() {
+		    var boxValue = SViewOCX.AddModel("K:\\Users\\yinyuanyuan\\Desktop\\datamange2.2\\ABF_CurveBead02.CATProduct.svl", "PATH|0");
+		    //alert(boxValue);
+		}
+		//"http://10.0.91.180:8071/data/upload/modelfile/20200113/1ea3a7dc-57d1-46df-901a-bd7df900c0d2/4a6675d3-688a-4818-ac54-b1839ff92377.svlx"
+		//打开模型
+		function Onclick44() {
+		    var boxValue = SViewOCX.Open(
+			// "http://localhost:8088/testSVL/creo2m100.prt.1.svl");
+               "C:\\Users\\CAD222\\Desktop\\工艺文件A\\工艺文件A\\models\\bearing cover_bevel gear_AS.prt.svl"
+            );
+		    SViewOCX.Show();		    
+		    //alert(boxValue);
+		}
+		//关闭模型
+		function Onclick45() {
+		    var boxValue = SViewOCX.Close();
+		    //alert(boxValue);
+		}
+		//保存模型 分散存储
+		function Onclick46() {
+		    var boxValue = SViewOCX.Save("K:\\Users\\yinyuanyuan\\Desktop\\testocx\\newDistribute.svl", false);
+		    //alert(boxValue);
+		}
+		//保存模型 不分散存储
+		function Onclick47() {
+		    var boxValue = SViewOCX.Save("K:\\Users\\yinyuanyuan\\Desktop\\testocx\\noDistributed.svl", true);
+		    //alert(boxValue);
+		}
+		//显示模型
+		function Onclick48() {
+		    var boxValue = SViewOCX.Show();
+		    //alert(boxValue);
+		}
+		//设置模型颜色
+		function Onclick49() {
+		    var boxValue = SViewOCX.SetModelColor(255,"PATH|0|1");
+		    //alert(boxValue);
+		}
+		//获取选择的模型
+		function Onclick50() {
+		    var boxValue = SViewOCX.GetSelectedModels();
+		    alert(boxValue);
+		}
+		//导出BOM
+		function Onclick51() {
+		    var boxValue = SViewOCX.ExportBOM("C:\\Users\\liubin\\Desktop\\svl\\1.xml");
+		    //alert(boxValue);
+		}
+		//选择模型
+		function Onclick52() {
+		    var boxValue = SViewOCX.SelectModels("PATH|0|1");
+		    //alert(boxValue);
+		}
+		//隐藏模型	
+		function Onclick53() {
+		    var boxValue = SViewOCX.SetModelVisibility("PATH|0|1",false);
+		    //alert(boxValue);
+		}
+		//显示模型
+		function Onclick54() {
+		    var boxValue = SViewOCX.SetModelVisibility("PATH|0|1", true);
+		    //alert(boxValue);
+		}
+		//获取父级节点
+		function OnclickGetParentObject(){
+		    var boxValue = SViewOCX.GetParentObject("PATH|0|1|1");
+		    alert(boxValue);
+		}
+		//播放动画 0复位
+		function Onclick55() {
+		    var boxValue = SViewOCX.Play(0);//0
+		    //alert(boxValue);
+		}
+		//播放动画 1-循环播放
+		function Onclick56() {
+		    var boxValue = SViewOCX.Play(1); //1
+		    //alert(boxValue);
+		}
+		//播放动画 2-播放
+		function Onclick57() {
+		    var boxValue = SViewOCX.Play(2); //2
+		    //alert(boxValue);
+		}
+		//播放动画 3-停止
+		function Onclick58() {
+		    var boxValue = SViewOCX.Play(3); //3
+		    //alert(boxValue);
+		}
+		//播放动画 4-继续
+		function Onclick59() {
+		    var boxValue = SViewOCX.Play(4); //4
+		    //alert(boxValue);
+		}
+		//创建批注 0-悬浮带引线批注
+		function Onclick60() {
+		    var boxValue = SViewOCX.CreateNote(0);
+		    //alert(boxValue);
+		}
+		//显示或者隐藏所有的模型
+		function OnclickChangeAllItemState() {
+		    var boxValue = SViewOCX.ChangeAllItemState(0);
+		}
+		//创建批注 1-悬浮无引线批注
+		function Onclick61() {
+		    var boxValue = SViewOCX.CreateNote(1);
+		    //alert(boxValue);
+		}
+		//创建批注 2-固定屏幕批注
+		function Onclick62() {
+		    var boxValue = SViewOCX.CreateNote(2);
+		    
+		    //alert(boxValue);
+		}
+		//创建批注 3-平行屏幕带引线批注
+		function Onclick63() {
+		    var boxValue = SViewOCX.CreateNote(3);
+		    //alert(boxValue);
+		}
+		//创建批注 4-平行屏幕无引线批注
+		function Onclick64() {
+		    var boxValue = SViewOCX.CreateNote(4);
+		    //alert(boxValue);
+		}
+		//创建焊点标注
+		function Onclick65() {
+		    var boxValue = SViewOCX.CreateJointsNote()
+		    //alert(boxValue);
+		}
+		//根据名称设置模型颜色
+		function OnclickSetModelColorByName() {
+		    var boxValue = SViewOCX.SetModelColorByName(255,"COVER_BASE");
+		}
+		//获取视图列表
+		function OnclickGetModelViewList() {
+		    var boxValue = SViewOCX.GetModelViewList();
+		    alert(boxValue);
+		}
+		//根据ID设置视图
+		function OnclickSetModelViewByID() {
+		    var boxValue = SViewOCX.SetModelViewByID(16777217);
+		    alert(boxValue);
+		}
+		//获取当前视图ID
+		function OnclickGetModelViewID() {
+		    var boxValue = SViewOCX.GetModelViewID();
+		    alert(boxValue);
+		}
+		//导出模型结构信息
+		function OnclickExportModels1() {
+		    var boxValue = SViewOCX.ExportModes(true, true, 1, 1);
+		   alert(boxValue);
+		}	
+		function OnclickExportModels2() {
+		    var boxValue = SViewOCX.ExportModes(false, true, 1, 1);
+		    alert(boxValue);
+		}
+		function OnclickExportModels3() {
+		    var boxValue = SViewOCX.ExportModes(false, false, 1, 1);
+		    alert(boxValue);
+		}
+		function OnclickExportModels4() {
+		    var boxValue = SViewOCX.ExportModes(true, false, 1, 1);
+		    alert(boxValue);
+		}
+		//显示默认视图
+		function OnclickShowDefaultView() {
+		    var boxValue = SViewOCX.ShowDefaultView();
+		    //alert(boxValue);
+		}
+		//获取选择的PMI
+		function OnclickGetSelectPMI() {
+		    var boxValue = SViewOCX.GetSelectPMI();
+		    alert(boxValue);
+		}
+		//选择模型
+		function OnclickSelectPMI() {
+
+		    var boxValue = document.getElementById("Text11").value;
+		    SViewOCX.SelectPMI(boxValue);
+		    //alert(boxValue);
+		}
+		//获取选择焊点
+		function OnclickGetSelectedWeld() {
+		    var boxValue = SViewOCX.GetSelectedWeld();
+		    alert(boxValue);
+		}
+		//选择焊点		
+		function OnclickSelectedWeld() {
+		    var boxValue = SViewOCX.SelectWeld(1);
+		    //alert(boxValue);
+		}
+		//设置焊点显隐状态
+		function OnclickSetWeldsVisibity1() {
+		    var boxValue = SViewOCX.SetWeldsVisibity("PATH|0|1",true);
+		    //alert(boxValue);
+		}				
+		function OnclickSetWeldsVisibity2() {
+		    var boxValue = SViewOCX.SetWeldsVisibity("PATH|0|1",false);
+		    //alert(boxValue);
+		}
+		//设置PMI显隐状态
+		function OnclickSetPMIVisibity1() {
+		    var selectPmi = SViewOCX.GetSelectPMI();
+		    var boxValue = SViewOCX.SetPMIVisibity(selectPmi, true);
+		    //alert(boxValue);
+		}
+		function OnclickSetPMIVisibity2() {
+		    //var selectPmi = SViewOCX.GetSelectPMI();
+		    var boxValue = SViewOCX.SetPMIVisibity("1", false);
+		    //alert(boxValue);
+		}
+		//根据名称获取内部ID		
+		function OnclickGetInstanceIDByName() {
+		    var boxValue = SViewOCX.GetInstanceIDByName("elbow(1)|BOLT(3)");
+		    alert(boxValue);
+		}
+		//设置透明度
+		function OnclickSetTransparencyByPlcPath() {
+		    var boxValue = SViewOCX.SetTransparencyByPlcPath("PATH|0|7a","0.5");
+		    alert(boxValue);
+		}
+		function OnclickSetModelTransparency() {
+		    var boxValue = SViewOCX.SetModelTransparency("PATH|0|7a","0");
+		    alert(boxValue);
+		}
+		function OnclickSaveFileAsForA() {
+		    var boxValue = SViewOCX.SaveFileAsForA("D:\0623\125.svl",false,"0");
+		    alert(boxValue);
+		}
+		function OnclickDeHighlightSurface() {
+		    var boxValue = SViewOCX.DeHighlightSurface("");
+		    alert(boxValue);
+		}
+		function OnclickStartCmdByID() {
+		    var boxValue = SViewOCX.StartCmdByID(421889);
+		    alert(boxValue);
+		}
+		function OnclickReplaceComponent() {
+		    var boxValue = SViewOCX.ReplaceComponent("D:\\山大冲压模具装配_MODEL\\05_上模座.prt.svl","PATH|0|3|1|2");  //|3|1|2
+		    alert(boxValue);
+		}
+		function OnclickAddModel2() {
+		    var boxValue = SViewOCX.AddModel2("E:\\XIANGGAI.prt.1.svl","PATH|0|43");  //|3|1|2
+		    alert(boxValue);
+		}
+		function OnclickSetCurStep() {
+		    var boxValue = SViewOCX.SetCurStep("0|7");  //|3|1|2
+		    alert(boxValue);
+		}
+		function OnclickDeleteStepExceptStepID() {
+		    var boxValue = SViewOCX.DeleteStepExceptStepID("0|50");  //|3|1|2
+		    alert(boxValue);
+		}
+		function OnclickShowCurAniStepComponentInBOM() {
+		    var boxValue = SViewOCX.ShowCurAniStepComponentInBOM("0|11","PATH|0|c:FDSF;PATH|0|1:FDSF");  //|3|1|2
+		    alert(boxValue);
+		}
+		function OnclickStepAniProcessNameAndProperty() {
+		    var boxValue = SViewOCX.StepAniProcessNameAndProperty("0|2","PATH|0","你好步骤五");  //|3|1|2
+		    alert(boxValue);
+		}
+		function OnclickGetAllAniIDList() {
+		    var boxValue = SViewOCX.GetAllAniIDList();  //|3|1|2
+		    alert(boxValue);
+		}
+		function OnclickGetNamesByInstanceId() {
+		    var boxValue = SViewOCX.GetNamesByInstanceId("PATH|0|7");  
+		    alert(boxValue);
+		}
+		function OnclickSave() {
+		    var boxValue = SViewOCX.Save("D:\0623\125.svl",false);
+		    alert(boxValue);
+		}
+		function OnclickSetModelZoom() {
+		    var boxValue = SViewOCX.SetModelZoom("7a");
+		    alert(boxValue);
+		}
+		//删除模型
+		function OnclickDeleteModelById() {
+		    var boxValue = SViewOCX.DeleteModelbyId("PATH|0|1");
+		    alert(boxValue);
+		}
+		//级联设置模型显隐
+		function OnclickSetModelLinkVisible1() {
+		    var boxValue = SViewOCX.SetObjLinkVisible("PATH|0", true);
+		    alert(boxValue); 
+		}			
+		function OnclickSetModelLinkVisible2() {
+		    var boxValue = SViewOCX.SetObjLinkVisible("PATH|0", false);
+		    alert(boxValue);
+		}
+		//打开批注文件
+		function OnclickOpenNoteFile() {
+		    var boxValue = SViewOCX.OpenNoteFile("K:\\Users\\yinyuanyuan\\Desktop\\testocx\\TEMP.xml", "test");
+		    alert(boxValue);
+		}
+		//显某文件的批注
+		function OnclickShowNoteGroup1() {
+		    var boxValue = SViewOCX.ShowNoteGroup("K:\\Users\\yinyuanyuan\\Desktop\\testocx\\TEMP.xml", "true");
+		   // alert(boxValue);
+		}
+		function OnclickShowNoteGroup2() {
+		    var boxValue = SViewOCX.ShowNoteGroup("K:\\Users\\yinyuanyuan\\Desktop\\testocx\\TEMP.xml", "false");
+		    // alert(boxValue);
+		}
+		//删除某批注文件的批注
+		function OnclickRemoveNoteGroup() {
+		    var boxValue = SViewOCX.RemoveNoteGroup("K:\\Users\\yinyuanyuan\\Desktop\\testocx\\TEMP.xml");
+		    //alert(boxValue);
+		}
+		//保存某文件的批注
+		function OnclickSaveNoteFile() {
+		    var boxValue = SViewOCX.SaveNoteFile("K:\\Users\\yinyuanyuan\\Desktop\\testocx\\TEMP.xml");
+		    //alert(boxValue);
+		}
+		//设置用户信息
+		function OnclickSetUserInfo() {
+		    var boxValue = SViewOCX.SetUserInfo("Sandy","SView","Programmar");
+		    //alert(boxValue);
+		}
+		//编辑批注
+		function OnclickEditNote() {
+		    var boxValue = SViewOCX.EditNote();
+		    //alert(boxValue);
+		}
+		//删除选择的批注
+		function OnclickDeleteSelectedNote() {
+		    var boxValue = SViewOCX.DeleteSelectedNote();
+		    //alert(boxValue);
+		}
+		//设置编辑的批注文件Get
+		function OnclickGetActiveNodeGroup() {
+		    //var boxValue = SViewOCX.GetActiveNodeGroup();
+		    //alert(boxValue);
+		}
+		//设置编辑的批注文件Set
+		function OnclickSetActiveNodeGroup() {
+		    var boxValue = SViewOCX.SetActiveNoteGroup("noteGroup");
+		    //alert(boxValue);
+		}
+		//设置批注的显隐状态
+		function OnclickSetUserNoteVisibity() {
+		    var boxValue = SViewOCX.SetUserNoteVisibity("PATH|0|1");
+		    //alert(boxValue);
+		}
+		//选择用户批注
+		function OnclickSelectUserNotes() {
+		    var boxValue = SViewOCX.SelectUserNotes("PATH|0|1");
+		    //alert(boxValue);
+		}
+		//根据动画步骤属性描述生成可拖动类型的PMI
+		function OnclickCreateAniProcessDescPMI() {
+		    var boxValue = SViewOCX.CreateAniProcessDescPMI("0|2","PATH|0","大大大大");  //|3|1|2
+		    alert(boxValue);
+		}
+		//根据动画步骤ID播放动画
+		function OnclickPlayStepByID() {
+		    var boxValue = SViewOCX.PlayStepByID("0|12;0|13;0|1;0|2;0|3");  
+		    alert(boxValue);
+		}
+		//暂停在播动画
+		function OnclickPausePlayingStep() {
+		    var boxValue = SViewOCX.PausePlayingStep();  
+		    alert(boxValue);
+		}
+		
+		//停止在播动画
+		function OnclickStopPlayingStep() {
+		    var boxValue = SViewOCX.StopPlayingStep();  
+		    alert(boxValue);
+		}
+		
+		//继续播放动画
+		function OnclickContinuePlayingStep() {
+		    var boxValue = SViewOCX.ContinuePlayingStep();  
+		    alert(boxValue);
+		}
+		
+		//设置工具栏按钮状态 前视图
+		function OnclickSetToolBarItemEnable1() {
+		    var boxValue = SViewOCX.SetToolBarItemEnable("ViewFront", true);
+		    //alert(boxValue);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("SavePicture", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("ViewFillall", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("ViewIsome", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("ViewTop", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("ViewLeft", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("ViewBack", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("ViewRight", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("ViewBottom", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("Replay", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("Pause", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("Reset", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("Play", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("PlaceHolder", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("Rec", true);
+		    
+		    
+		    var boxValue = SViewOCX.SetToolBarItemEnable("AnimationMode", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("ShowAssemblyPanel", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("ShowHideAnnotationPanel", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("ShowHideViewPanel", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("ShowHideSpotPanel", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("ShowHidePropertyPanel", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("ShowHideTagPanel", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("ProjectType", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("ChangeHightlight", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("BackGroundColor", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("ButtonRotate", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("UserNoteLineCreate", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("UserNoteNoLineCreate", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("UserNotePcreateLineCreate", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("UserNotePcreateNoLineCreate", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("UserNoteFixCreate", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("UserNoteSave", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("UserNoteOpen", true);
+
+		    var boxValue = SViewOCX.SetToolBarItemEnable("PointToPointCommand", true);
+		    //alert(boxValue);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("PointToLineCommand", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("LineToLineCommand", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("RadiusCommand", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("DiameterCommand", true);
+
+		    var boxValue = SViewOCX.SetToolBarItemEnable("AngleCommand", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("LengthCommand", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("3DNoteCommand", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("ComponentNoteCmd", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("JointsNoteCmd", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("MegneticLineCmd", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("ComponentSNNoteCmd", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("NoteSuffixAddCmd", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("NoteSuffixEditCmd", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("TorqueNoteCmd", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("GapNoteCmd", true);	    
+		    
+		    
+		    var boxValue = SViewOCX.SetToolBarItemEnable("CLIPPLANECommand", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("ShowCLIPPLANECommand", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("AnimationCommand", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("PMIEditCommand", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("PMIDeleteCommand", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("PMIAddToViewCommand", true);
+
+		    var boxValue = SViewOCX.SetToolBarItemEnable("AssemblyMoveCommand", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("AssemblyResetCommand", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("AssemblyCommand", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("CollisionOptionCommand", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("CollisionRecalCommand", true);
+
+		    var boxValue = SViewOCX.SetToolBarItemEnable("CollisionShowAllCommand", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("CollisionShowCurCommand", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("CollisionShowPreCommand", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("CollisionShowNextCommand", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("CollisionShowClipCommand", true);
+
+		    var boxValue = SViewOCX.SetToolBarItemEnable("CollisionShowEdgeCommand", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("CollisionShowCutlineCommand", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("CollisionShowVolCommand", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("CollisionShowInsCurCommand", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("CollisionShowInsAllCommand", true);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("OnShowHideTagPane", true);
+
+		    //alert(boxValue);
+		}			
+		function OnclickSetToolBarItemEnable2() {
+		    var boxValue = SViewOCX.SetToolBarItemEnable("ViewFront", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("SavePicture", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("ViewFillall", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("ViewIsome", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("ViewTop", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("ViewLeft", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("ViewBack", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("ViewRight", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("ViewBottom", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("Replay", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("Pause", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("Reset", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("Play", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("PlaceHolder", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("Rec", false);
+		    
+		    
+		    var boxValue = SViewOCX.SetToolBarItemEnable("AnimationMode", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("ShowAssemblyPanel", false);
+
+		    var boxValue = SViewOCX.SetToolBarItemEnable("ShowHideAnnotationPanel", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("ShowHideViewPanel", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("ShowHideSpotPanel", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("ShowHidePropertyPanel", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("ShowHideTagPanel", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("ProjectType", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("ChangeHightlight", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("BackGroundColor", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("ButtonRotate", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("UserNoteLineCreate", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("UserNoteNoLineCreate", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("UserNotePcreateLineCreate", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("UserNotePcreateNoLineCreate", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("UserNoteFixCreate", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("UserNoteSave", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("UserNoteOpen", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("PointToPointCommand", false);
+		 
+		    var boxValue = SViewOCX.SetToolBarItemEnable("PointToLineCommand", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("LineToLineCommand", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("RadiusCommand", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("DiameterCommand", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("AngleCommand", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("LengthCommand", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("3DNoteCommand", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("ComponentNoteCmd", false);
+
+		    var boxValue = SViewOCX.SetToolBarItemEnable("JointsNoteCmd", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("MegneticLineCmd", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("ComponentSNNoteCmd", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("NoteSuffixAddCmd", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("NoteSuffixEditCmd", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("TorqueNoteCmd", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("GapNoteCmd", false);
+		    
+		    
+		    var boxValue = SViewOCX.SetToolBarItemEnable("CLIPPLANECommand", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("ShowCLIPPLANECommand", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("AnimationCommand", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("PMIEditCommand", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("PMIDeleteCommand", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("PMIAddToViewCommand", false);
+
+
+		    var boxValue = SViewOCX.SetToolBarItemEnable("AssemblyMoveCommand", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("AssemblyResetCommand", false);
+
+		    var boxValue = SViewOCX.SetToolBarItemEnable("AssemblyCommand", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("CollisionOptionCommand", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("CollisionRecalCommand", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("CollisionShowAllCommand", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("CollisionShowCurCommand", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("CollisionShowPreCommand", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("CollisionShowNextCommand", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("CollisionShowClipCommand", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("CollisionShowEdgeCommand", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("CollisionShowCutlineCommand", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("CollisionShowVolCommand", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("CollisionShowInsCurCommand", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("CollisionShowInsAllCommand", false);
+		    var boxValue = SViewOCX.SetToolBarItemEnable("OnShowHideTagPane", false);
+
+		    //alert(boxValue);
+		}
+		
+				//导入焊点文件
+		function OnclickImpotJoints() {
+		    var boxValue = SViewOCX.ImpotJoints("K:\\Users\\yinyuanyuan\\Desktop\\datamange2.2\\DPUB-02542-XAX-J60-5100100_01.CATProduct111.txt");
+		    alert(boxValue);
+		}
+		//添加焊点
+		function OnclickAddJoint() {
+		    var boxValue = SViewOCX.AddJoint("JEID:Joint Element.00001;JBID:Joint Body.1;JID:Assembly Joint.1;PRDINST_PATHID:DPUB-02542-XAX-J60-5100100_01!;PCA:Welding;SDF:3D Point;DIA:6;LOCX:350.266;LOCY:-95.782;LOCZ:39.015;WX:0;WY:0;WZ:-1");
+		    alert(boxValue);
+		}
+		//删除焊点
+		function OnclickDeleteJoints() {
+		    var boxValue = SViewOCX.DeleteJoints("DPUB-02542-XAX-J60-5100100_01:Assembly Joint.1!Joint Element.00001");
+		    alert(boxValue);
+		}
+		//设置焊点显隐状态
+		function OnclickSetJointsVisbility1() {
+		    var boxValue = SViewOCX.SetJointsVisbility("DPUB-02542-XAX-J60-5100100_01:Assembly Joint.14!Joint Element.00121;DPUB-02542-XAX-J60-5100100_01:Assembly Joint.14!Joint Element.00120", true);
+		    alert(boxValue);
+		}
+		function OnclickSetJointsVisbility2() {
+		    var boxValue = SViewOCX.SetJointsVisbility("DPUB-02542-XAX-J60-5100100_01:Assembly Joint.14!Joint Element.00121;DPUB-02542-XAX-J60-5100100_01:Assembly Joint.14!Joint Element.00120", false);
+		    alert(boxValue);
+		}
+		//显隐所有焊点
+		function OnclickSetAllJointsVisbility1() {
+		    var boxValue = SViewOCX.SetAllJointsVisbility(true);
+		    alert(boxValue);
+		}		
+		function OnclickSetAllJointsVisbility2() {
+		    var boxValue = SViewOCX.SetAllJointsVisbility(false);
+		    alert(boxValue);
+		}
+		//选择焊点
+		function OnclickSelectJoints() {
+		   // var boxValue = SViewOCX.SelectJoints("DPUB-01011-XAX-T15-5600010_01_RootCatalog:Assembly Joint.8!Joint Element.00076");
+		    
+		    var boxValue = SViewOCX.SelectJoints("DPUB-02542-XAX-J60-5100100_01:Assembly Joint.14!Joint Element.00121;DPUB-02542-XAX-J60-5100100_01:Assembly Joint.14!Joint Element.00120");
+		    alert(boxValue);
+		}
+		//获取选择焊点
+		function OnclickGetSelecedJoints() {
+            
+            var idd;
+		    var boxValue = SViewOCX.GetSelecedJoints(idd);
+		    alert(idd);
+		}
+		//修改焊点内容
+		function OnclickGetSelecedJoints() {
+		    var boxValue = SViewOCX.UpdateJoint("DPUB-02542-XAX-J60-5100100_01:Assembly Joint.1!Joint Element.00001", "JEID:Joint Element.00001;JBID:Joint Body.1;JID:Assembly Joint.1;PRDINST_PATHID:DPUB-02542-XAX-J60-5100100_01!;PCA:Welding;SDF:3D Point;DIA:6;LOCX:1598.74;LOCY:-40.799;LOCZ:37.978;WX:-0.295;WY:0;WZ:0.956"); 
+		    alert(boxValue);
+		}
+		//设置焊点颜色
+		function OnclickSetJointColor() {
+		    var boxValue = SViewOCX.SetJointColor(0, "DPUB-02542-XAX-J60-5100100_01:Assembly Joint.1!Joint Element.00001");
+		    alert(boxValue);
+		}
+		//删除标注
+		function OnclickDeleteTag() {
+		    var id = SViewOCX.GetSelectPMI();
+		    alert(id);
+		    var boxValue = SViewOCX.DeleteTag(id);
+		    //alert(boxValue);
+		}
+		//编辑标注
+		function OnclickEditTag() {
+		    var boxValue = SViewOCX.EditTag();
+		    //alert(boxValue);
+		}
+		//导出焊点信息
+		function OnclickExportJoints() {
+		    var boxValue = SViewOCX.ExportJoints("K:\\Users\\yinyuanyuan\\Desktop\\testocx\\1.txt");
+		    alert(boxValue);
+		}
+		//创建零组件标注
+		function OnclickCreateComponentNote() {
+		    var boxValue = SViewOCX.CreateComponentNote();
+		    alert(boxValue);
+		}
+		//创建焊点标注
+		function OnclickCreateJointsNote() {
+		    var boxValue = SViewOCX.CreateJointsNote();
+		    //alert(boxValue);
+		}
+		//获取焊点对应的焊点标注
+		function OnclickGetJointNote() {
+		    var boxValue = SViewOCX.GetJointNote();
+		    alert(boxValue);
+		}
+		//获取零组件对应的零组件标注
+		function OnclickGetComponentNote() {
+		    var boxValue = SViewOCX.GetComponentNote();
+		    alert(boxValue);
+		}			
+		
+		//焊点面板显隐控制
+		function OnclickShowHidePanel() {
+		    SViewOCX.SetToolBarItemEnable("ShowAssemblyPanel", 0);
+		}
+		function saveSVL()
+		{
+			var bDis = document.getElementById("distribution").value;
+			SViewOCX.Save(document.getElementById("savepath").value, bDis);
+		}
+		function OnclickSetInsVisible() {
+		    //var boxValue = SViewOCX.SetInsVisible("PATH|0|1", 1, 0);
+		    var boxValue = SViewOCX.SetInstanceVisible("PATH|0|1", 1, 0);
+		    alert(boxValue);
+		}
+		function OnclickRefreshViewWindow() {
+		    var boxValue = SViewOCX.RefreshViewWindow();
+		    alert(boxValue);
+		}
+		function OnclickGetPMIInfo() {
+		    var boxValue = SViewOCX.GetPMIInfo("TORQUE");
+		    alert(boxValue);
+		}
+		function OnclickGetPMIInfoGAP() {
+		    var boxValue = SViewOCX.GetPMIInfo("GAP");
+		    alert(boxValue);
+		}
+		function OnclickGetPMIInfoSN() {
+		    var boxValue = SViewOCX.GetPMIInfo("COMPONENT_SN");
+		    alert(boxValue);
+		}
+		function OnclickGetPMIInfoBlank() {
+		    var boxValue = SViewOCX.GetPMIInfo("");
+		    alert(boxValue);
+		}		
+		function OnclickAddProperty() {
+		    var boxValue = SViewOCX.AddProperty("PATH|0|1", "Sandy", "Yin");
+		    //alert(boxValue);
+		}
+		function OnclickEditProperty() {
+		    var boxValue = SViewOCX.EditProperty("PATH|0|1", "Sandy", "Cindy");
+		    //alert(boxValue);
+		}
+		function OnclickGetPropertyValueByPropertyName() {
+		    var boxValue = SViewOCX.GetPropertyValueByPropertyName("PATH|0|1", "Sandy");
+		    alert(boxValue);
+		}
+		function OnclickShowHideToolBarByName() {
+		    var boxValue = SViewOCX.ShowHideToolBarByName("WIRE", true);
+		   // alert(boxValue);
+		}
+		function OnclickShowHideAllPMI() {
+		    var boxValue = SViewOCX.ShowHideAllPMI(false);
+		   // alert(boxValue);
+		}
+		function OnclickCreateGapNote() {
+		    var boxValue = SViewOCX.CreateGapNote();
+		   alert(boxValue);
+		}
+		function OnclickGetPMIStateById() {
+
+		    var boxValue = SViewOCX.GetSelectPMI();
+		    var moxValue = SViewOCX.GetPMIStateById(boxValue);
+		    alert(moxValue);
+		}
+		
+		function OnclickSetDimensionPoint() {
+		    var boxValue = SViewOCX.SetDimensionPoint();
+		    // alert(boxValue);
+		}
+
+		function OnclickCustomScreenShot() {
+		    var boxValue = SViewOCX.CustomScreenShot();
+		    // alert(boxValue);
+		}
+		function OnclickGetInstanceIDByPropertyName() {
+		    //var boxValue = SViewOCX.GetInstanceIDByPropertyName("SVL_NAME","motor(1)|cb22_belt_3(1)|cb22_pully_61t(1)");
+		    //var boxValue = SViewOCX.GetInstanceIDByPropertyName("SVL_NAME", "DPUB-02542-XAX-J60-5100100_01(1)|DPUB-04251-XAX-J60-5101010_00(1)|DPUB-03977-XAX-J60-5101011_00(1)");
+		    var boxValue = SViewOCX.GetInstanceIDByPropertyName("Revision", "00");
+		    alert(boxValue);
+		}
+		function OnclickShowBox() {
+		    var boxValue = SViewOCX.ShowBox(false);
+		}
+		function OnclickGetVolume() {
+
+		    var boxValue = SViewOCX.GetVolume();
+		    alert(boxValue);
+		}
+		function OnclickGetBox() {
+		    var boxValue = SViewOCX.GetBox();
+		    alert(boxValue);
+		}
+		function OnclickDelTagMethod() {
+		    var boxValue = SViewOCX.DeleteTag("");
+		}
+		function OnclickEditTagMethod() {
+		    var boxValue = SViewOCX.EditTag();
+		}
+		function OnclickCreateComponentNoteMethod() {
+		    var boxValue = SViewOCX.CreateComponentNote();
+		}
+		function OnclickShowFromName() {
+		    //var selpmi = SViewOCX.GetSelectPMI();
+		    var boxvalue = SViewOCX.ShowByName("ELBOW_FIT", false, false);
+		}
+		function OnclickDeleteNoteFromFile() {
+		    var boxvalue = SViewOCX.DeleteNoteByFile("H:\\samplefiles\\elbow.asm.26");
+		}
+		function OnclickSelectAndShowView() {
+		    //var selectPmi = SViewOCX.GetSelectPMI();
+		    var boxValue = document.getElementById("Text11").value;
+		    SViewOCX.SelectAndShowView(boxValue);		 
+		}
+		//根据名称获取内部ID		
+		function OnclickGetInstanceIDByNameF() {
+		    var boxValue = SViewOCX.GetInstanceIDByName("feijiyinqing|asm0001_|propeller_standard_");
+		    alert(boxValue);
+		}
+		function OnclickGetCategoryPropertyValue() {
+		    //var boxValue = SViewOCX.GetInstanceIDByName("feijiyinqing|asm0001_|propeller_standard_");
+		    var boxValue = SViewOCX.GetCategoryPropertyValue("PATH|0|1|13", "SVL_ID", "1");
+		    alert(ret);
+		}
+		function OnclickDeleteCategoryProperty() {
+		    //var boxValue = SViewOCX.GetInstanceIDByName("feijiyinqing|asm0001_|propeller_standard_");
+		    SViewOCX.DeleteCategoryProperty("PATH|0|1|13", "SVL_ID", "1");
+		    //alert(ret);
+		}
+		function OnclickGetCategoryProperty() {
+		    //var boxValue = SViewOCX.GetInstanceIDByName("feijiyinqing|asm0001_|propeller_standard_");
+		    var boxValue = SViewOCX.GetCategoryProperty("PATH|0|1|13", "1");
+		    alert(ret);
+		}
+		//导入装配组件列表
+		function OnclickAssemblyComponentInsert() {
+
+		    var boxValue = document.getElementById("Text12").value;
+		    SViewOCX.AssemblyComponentInsert(boxValue);
+		    //alert(boxValue);
+		}
+		//扫描导入装配列表
+		function OnclickAssemblyComponentScanInsert() {
+
+		    var boxValue = document.getElementById("Text13").value;
+		    SViewOCX.AssemblyComponentScanInsert(boxValue);
+		    //alert(boxValue);
+		}
+	 </script>
+
+
+    </script>
+
+    <script for="SViewOCX" language="javascript" event="OnModelSelected(N1,N2)" type="text/javascript">
+        var boxValue = SViewOCX.OnModelSelected();
+        alert(N1);
+        alert(N2);
+    </script>
+
+    <script for="SViewOCX" language="javascript" event="OnCustomScreenShot()" type="text/javascript">
+     var boxValue = SViewOCX.CustomScreenShot();
+    	alert("触发OnCreateGapNote：");
+    </script>
+    <script for="SViewOCX" language="javascript" event="OnSetDimensionPoint()" type="text/javascript">
+     var boxValue = SViewOCX.SetDimensionPoint();
+    	//alert("触发OnCreateGapNote：");
+    </script>
+
+    <script for="SViewOCX" language="javascript" event="OnCreateGapNote()" type="text/javascript">
+     var boxValue = SViewOCX.CreateGapNote();
+    	//alert("触发OnCreateGapNote：");
+    </script>
+
+    <script for="SViewOCX" language="javascript" event="OnCreateTorqueNote()" type="text/javascript">
+     var boxValue = SViewOCX.CreateTorqueNote();    
+    	alert("触发OnCreateTorqueNote：");
+    </script>
+
+    
+      <script for="SViewOCX" language="javascript" event="OnCreateJointsSNNote()" type="text/javascript">
+     var boxValue = SViewOCX.CreateJointsSNNote();
+    	//alert(N1);
+      </script>
+      <script for="SViewOCX" language="javascript" event="OnCreateJointsNote()" type="text/javascript">
+     var boxValue = SViewOCX.CreateJointsNote();
+    	//alert(N1);
+      </script>
+
+    <script for="SViewOCX" language="javascript" event="OnDelMegneticLine(N1)" type="text/javascript">
+    alert(N1);
+     var boxValue = SViewOCX.DelMegneticLine(N1);    	
+    </script>
+    <script for="SViewOCX" language="javascript" event="OnMagneticlineShowhide()" type="text/javascript">
+     var boxValue = SViewOCX.SetMegneticLineVisible();
+    	alert(N1);
+    </script>    
+    <script for="SViewOCX" language="javascript" event="OnSetMegneticLineVisible(N1,N2)" type="text/javascript">
+     var boxValue = SViewOCX.SetMegneticLineVisible(N1,N2);
+    	alert("触发SetMegneticLineVisible：");
+    </script>     
+
+   <script for="SViewOCX" language="javascript" event="OnIntegrateTagEditEnd(N1)" type="text/javascript">
+
+   </script>
+    
+    <script for="SViewOCX" language="javascript" event="OnIntegrateTagAddEnd(N1,N2)" type="text/javascript">
+    </script>
+
+	<script for="SViewOCX" language="javascript" event="OnIntegrateTagDel(N1,N2)" type="text/javascript">
+    	alert(N1);  
+     var boxValue = SViewOCX.DeleteTag(N1);  
+    </script>
+    <script for="SViewOCX" language="javascript" event="OnIntegrateTagEdit(N1,N2)" type="text/javascript">
+     var boxValue = SViewOCX.EditTag();
+    </script>
+    <script for="SViewOCX" language="javascript" event="OnIntergrateTagDeleteEnd(N1)" type="text/javascript">
+    </script>
+	
+	<script for="SViewOCX" language="javascript" event="OnWireCmdFinishEvent(N1,N2)" type="text/javascript">     
+
+    </script>
+</HEAD>
+
+<body leftmargin="0" topmargin="0" marginwidth="500" marginheight="500" onResize="resize()" onLoad="resize()">
+
+    <!--<input id="path" type="text" size="20"><input type="button" value="打开SVL" style="cursor:hand" onClick="return showSVL();"/>-->
+    <OBJECT ID="SViewOCX" name="SViewOCX" WIDTH=600 HEIGHT=600 CLASSID="CLSID:8CF55D94-C629-4B51-B8D3-1087B82E7D0C">
+    </OBJECT>
+
+
+</body>
+
+
+</HTML>

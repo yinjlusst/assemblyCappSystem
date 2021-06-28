@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div class="tpl-left-nav tpl-left-nav-hover" id="lefter">
+    <div class="tpl-left-nav-title">
+        Amaze UI 列表
+    </div>
+    <div class="tpl-left-nav-list">
+        <ul class="tpl-left-nav-menu">
+            <li class="tpl-left-nav-item">
+                <a href="http://manage.capp.com:7001/manage/index" :class="{'nav-link':true,'active':indexActive}" @click="changeActive('indexActive')">
+                    <i class="am-icon-home"></i>
+                    <span>首页</span>
+                </a>
+            </li>
+
+            <li class="tpl-left-nav-item">
+                <a href="http://manage.capp.com:7001/moduleBrowser/index" :class="{'nav-link':true,'tpl-left-nav-link-list':true,'active':threeDimensionBrowser}" @click="changeActive('threeDimensionBrowser')">
+                    <i class="am-icon-bar-chart"></i>
+                    <span>三维模型快速浏览器</span>
+                </a>
+            </li>
+
+            <li class="tpl-left-nav-item">
+                <a href="javascript:;" :class="{'nav-link':true,'tpl-left-nav-link-list':true}" @click="changeUserManageDisplay">
+                    <i class="am-icon-table"></i>
+                    <span>用户管理</span>
+                    <i class="am-icon-angle-right tpl-left-nav-more-ico am-fr am-margin-right"></i>
+                </a>
+                <ul class="tpl-left-nav-sub-menu" :style="{display: userManageDisplay}" >
+                    <li>
+                        <a href="http://manage.capp.com:7001/userList/index" :class="{'active':userManageBasicInfoActive}" @click="changeActive('userManageBasicInfoActive')">
+                            <i class="am-icon-angle-right"></i>
+                            <span>用户基本信息</span>
+                            <i class="am-icon-star tpl-left-nav-content-ico am-fr am-margin-right"></i>
+                        </a>
+
+                        <a href="#" :class="{'active':userManageAddInfoActive}" @click="changeActive('userManageAddInfoActive')">
+                            <i class="am-icon-angle-right"></i>
+                            <span>用户附加信息</span>
+                            <i class="tpl-left-nav-content tpl-badge-success">
+                                18
+                            </i>
+                        </a>
+
+                        <a href="#" :class="{'active':userManageAuthActive}" @click="changeActive('userManageAuthActive')">
+                            <i class="am-icon-angle-right"></i>
+                            <span>权限管理</span>
+                            <i class="tpl-left-nav-content tpl-badge-primary">
+                                5
+                            </i>
+                        </a>
+
+                    </li>
+                </ul>
+            </li>
+
+            <li class="tpl-left-nav-item">
+                <a href="javascript:;" class="nav-link tpl-left-nav-link-list">
+                    <i class="am-icon-wpforms"></i>
+                    <span>装配工艺管理</span>
+                    <i class="am-icon-angle-right tpl-left-nav-more-ico am-fr am-margin-right tpl-left-nav-more-ico-rotate"></i>
+                </a>
+                <ul class="tpl-left-nav-sub-menu" style="display: block;">
+                    <li>
+                        <a href="http://manage.capp.com:7001/processManage/processDocumentIndex">
+                            <i class="am-icon-angle-right"></i>
+                            <span>工艺文件管理</span>
+                            <i class="am-icon-star tpl-left-nav-content-ico am-fr am-margin-right"></i>
+                        </a>
+
+                        <a href="http://manage.capp.com:7001/processManage/moduleDocumentIndex">
+                            <i class="am-icon-angle-right"></i>
+                            <span>三维模型管理</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <li class="tpl-left-nav-item">
+                <a href="#" class="nav-link tpl-left-nav-link-list" @click="removeOCX"><!-- -->
+                    <i class="am-icon-key"></i>
+                    <span>登录</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+</body>
+
+
+
+<script src="/js/jquery.min.js"></script>
+<script src="/js/amazeui.min.js"></script>
+<script src="/js/iscroll.js"></script>
+<script src="/js/app.js"></script>
+<script src="/js/axios.min.js"></script>
+<script src="/js/vue.min.js"></script>
+<script src="/js/echarts.min.js"></script>
+<script type="text/javascript">
+    var vm = new Vue({
+        el: '#lefter', //id选择上面的app div
+        data: {
+            indexActive: false,
+            userManageActive:false,
+            userManageBasicInfoActive:false,
+            userManageAddInfoActive:false,
+            userManageAuthActive:false,
+            threeDimensionBrowser:false,
+            userManageDisplay:"none"
+        },
+        mounted:function() {
+            this.changeActive("indexActive")
+            this.changeUserManageDisplay();
+        },
+        methods:{
+            changeActive:function (name) {
+                this.indexActive = false;
+                this.userManageActive=false;
+                this.userManageBasicInfoActive=false;
+                this.userManageAddInfoActive=false;
+                this.userManageAuthActive=false;
+                this.threeDimensionBrowser=false;
+                if(name == "indexActive"){
+                    this.indexActive = true;
+                }else if(name == "userManageBasicInfoActive"){
+                    this.userManageActive=true;
+                    this.userManageBasicInfoActive=true;
+                }else if(name == "userManageAddInfoActive"){
+                    this.userManageActive=true;
+                    this.userManageAddInfoActive=true;
+                }else if(name=="userManageAuthActive"){
+                    this.userManageActive=true;
+                    this.userManageAuthActive=true;
+                }else if(name="threeDimensionBrowser"){
+                    this.threeDimensionBrowser=true;
+                }
+            },
+            changeUserManageDisplay:function () {
+                if(this.userManageDisplay == "none"){
+                    this.userManageDisplay = "block";
+                }else {
+                    this.userManageDisplay = "none";
+                }
+
+            },
+            removeOCX:function () {
+                // 窗口关闭前，先移除这两个控件
+
+                var drawerControl = document.getElementById("SViewOCX");
+                if(drawerControl != null){
+                    document.removeChild(drawerControl);
+                }
+
+
+            }
+        }
+    });
+</script>
+
+
+</html>

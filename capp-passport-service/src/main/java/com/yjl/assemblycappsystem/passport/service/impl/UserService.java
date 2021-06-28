@@ -1,8 +1,8 @@
 package com.yjl.assemblycappsystem.passport.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.yjl.asemblycappsystem.util.ActiveMQUtil;
-import com.yjl.asemblycappsystem.util.RedisUtil;
+import com.yjl.assemblycappsystem.util.ActiveMQUtil;
+import com.yjl.assemblycappsystem.util.RedisUtil;
 import com.yjl.assemblycappsystem.bean.UmsUserAddinfo;
 import com.yjl.assemblycappsystem.bean.UmsUserInfo;
 import com.yjl.assemblycappsystem.bean.UmsUserSearchInfo;
@@ -12,7 +12,6 @@ import com.yjl.assemblycappsystem.passport.mapper.UmsUserInfoMapper;
 import io.searchbox.client.JestClient;
 import io.searchbox.core.Search;
 import io.searchbox.core.SearchResult;
-import org.apache.catalina.User;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.TermQueryBuilder;

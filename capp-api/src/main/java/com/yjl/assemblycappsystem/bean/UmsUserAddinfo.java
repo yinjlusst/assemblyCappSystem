@@ -5,17 +5,16 @@ import javax.persistence.GenerationType;
 import javax.persistence.Transient;
 import java.io.Serializable;
 
+
 public class UmsUserAddinfo implements Serializable {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private String id;
     private String qq;
     private String weibo;
     private String introduce;
     private Integer userId;
     @Transient
-    private String headPortraitsUrl;//修改用户附加信息页面有headPortraitsUrl属性，需要封装一下
-
-
+    private String headPortraitsUrl;
 
     public String getHeadPortraitsUrl() {
         return headPortraitsUrl;

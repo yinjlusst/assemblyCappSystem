@@ -5,6 +5,7 @@ import com.alibaba.dubbo.config.annotation.Reference;
 import com.yjl.assemblycappsystem.annotations.LoginRequired;
 import com.yjl.assemblycappsystem.bean.UmsUserAddinfo;
 import com.yjl.assemblycappsystem.bean.UmsUserInfo;
+import com.yjl.assemblycappsystem.commons.WebConstans;
 import com.yjl.assemblycappsystem.service.UserService;
 import com.yjl.assemblycappsystem.util.SlideVerificationCodeUtil;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -117,7 +118,8 @@ public class SignInController {
         //保存
         saveUserId = userService.addUser(umsUserInfo);
 
-        if (saveUserId != -1 ){
+        if (saveUserId != -1){
+            umsUserInfo.setId(saveUserId);
             UmsUserAddinfo umsUserAddinfo = new UmsUserAddinfo();
             umsUserAddinfo.setUserId(saveUserId);
             UmsUserAddinfo umsUserAddinfo1 = userService.addUserAddinfo(umsUserAddinfo);
@@ -125,9 +127,13 @@ public class SignInController {
                 return "fail";
             }
             else {
-                return "success";
-            }
+                //头像新增
+                userService.addHeadPortraitUrl(umsUserInfo,WebConstans.defaultHeadPortraitsUrl);
+                //redis的username和employeeId新增
+                String success = userService.addUsernameAndEmployeeId(umsUserInfo);
 
+                return success;
+            }
         }else {
             return "fail";
         }

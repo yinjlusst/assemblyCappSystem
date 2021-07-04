@@ -41,10 +41,8 @@ public class UserAddInfoController {
     @RequestMapping("getUserAddinfo")
     @ResponseBody
     public String getUserAddinfo(HttpServletRequest request){
-        //String username = (String) request.getAttribute("username");
-        //String idStr = (String) request.getAttribute("id");
-        String username = "yinjianliang";
-        String idStr = "8";
+        String username = (String) request.getAttribute("username");
+        String idStr = (String) request.getAttribute("id");
         UmsUserAddinfo umsUserAddinfo = userService.getUserAddinfoByUserId(Integer.parseInt(idStr));
 
         if (umsUserAddinfo == null){
@@ -85,24 +83,30 @@ public class UserAddInfoController {
      */
     @ResponseBody
     @RequestMapping("renewUserInfo")
-    public String renewUserInfo(@RequestBody UmsUserAddinfo umsUserAddinfo,HttpServletRequest request){
+    public String renewUserInfo(@RequestBody UmsUserAddinfo umsUserAddinfo, HttpServletRequest request){
         String username = (String) request.getAttribute("username");
         String idStr = (String) request.getAttribute("id");
 
         Integer uid = Integer.parseInt(idStr);
         umsUserAddinfo.setUserId(uid);
 
+        //封装头像bean
+        UmsUserHeadPortraitUrl umsUserHeadPortraitUrl = new UmsUserHeadPortraitUrl();
+        umsUserHeadPortraitUrl.setUserId(uid);
+        umsUserHeadPortraitUrl.setHeadPortraitUrl(umsUserAddinfo.getHeadPortraitsUrl());
+
 
         //检测数据是否有效
         if (umsUserAddinfo.getIntroduce().length()>=250 && umsUserAddinfo.getQQ().length()>=15 && umsUserAddinfo.getWeibo().length()>=25){
             return "fail";
         }
-        if (StringUtils.isNotBlank(umsUserAddinfo.getHeadPortraitsUrl()) && umsUserAddinfo.getHeadPortraitsUrl().length()>3){
+
+        if (StringUtils.isNotBlank(umsUserHeadPortraitUrl.getHeadPortraitUrl()) && umsUserHeadPortraitUrl.getHeadPortraitUrl().length()>3){
             //只有用户更新了头像才有必要更新
-            UmsUserHeadPortraitUrl umsUserHeadPortraitUrl = new UmsUserHeadPortraitUrl();
-            umsUserHeadPortraitUrl.setUserId(uid);
-            umsUserHeadPortraitUrl.setHeadPortraitUrl(umsUserAddinfo.getHeadPortraitsUrl());
-            UmsUserHeadPortraitUrl umsUserHeadPortraitUrl1 = userService.renewHeadPortraitsUrl(umsUserHeadPortraitUrl);
+            UmsUserHeadPortraitUrl headPortraitUrl = new UmsUserHeadPortraitUrl();
+            headPortraitUrl.setUserId(uid);
+            headPortraitUrl.setHeadPortraitUrl(umsUserHeadPortraitUrl.getHeadPortraitUrl());
+            UmsUserHeadPortraitUrl umsUserHeadPortraitUrl1 = userService.renewHeadPortraitsUrl(headPortraitUrl);
             if ( umsUserHeadPortraitUrl1  == null){
                 //头像更新失败
             }

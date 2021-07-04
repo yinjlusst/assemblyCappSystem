@@ -58,7 +58,6 @@ public class ManageController {
      */
     @RequestMapping("logout")
     public String logout(HttpServletRequest request, HttpServletResponse response){
-
         CookieUtil.deleteCookie(request,response,"oldToken");
         return "redirect:http://passport.capp.com:7000/passport/index";
     }

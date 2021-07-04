@@ -60,12 +60,33 @@ public class UserService implements com.yjl.assemblycappsystem.service.UserServi
      */
     @Override
     public Integer addUser(UmsUserInfo umsUserInfo) {
-        Jedis jedis = null;
         int i = umsUserInfoMapper.insertSelective(umsUserInfo);
         if (i <= 0) {
             return -1;
         }
+        return i;
+    }
 
+    /**
+     * 向mongodb中插入用户默认头像
+     * @param umsUserInfo
+     */
+    @Override
+    public void addHeadPortraitUrl(UmsUserInfo umsUserInfo,String url) {
+        UmsUserHeadPortraitUrl umsUserHeadPortraitUrl = new UmsUserHeadPortraitUrl();
+        umsUserHeadPortraitUrl.setHeadPortraitUrl(url);
+        umsUserHeadPortraitUrl.setUserId(umsUserInfo.getId());
+        umsUserHeadPortraitUrlMapper.insert(umsUserHeadPortraitUrl);
+    }
+
+    /**
+     * 将用户的username和employeeId加入redis防止重复
+     * @param umsUserInfo
+     * @return
+     */
+    @Override
+    public String addUsernameAndEmployeeId(UmsUserInfo umsUserInfo){
+        Jedis jedis = null;
         //将username和employeeId分别存入redis
         try {
             jedis = redisUtil.getJedis();
@@ -73,12 +94,14 @@ public class UserService implements com.yjl.assemblycappsystem.service.UserServi
                 jedis.sadd("all:username:set", umsUserInfo.getUsername());
                 jedis.sadd("all:employeeId:set", umsUserInfo.getEmployeeId());
             }
+            return "success";
         }catch (Exception e){
             e.printStackTrace();
         }finally {
             jedis.close();
         }
-        return i;
+        return "fail";
+
     }
 
 
@@ -141,7 +164,7 @@ public class UserService implements com.yjl.assemblycappsystem.service.UserServi
     @Override
     public UmsUserAddinfo renewUserAddinfo(UmsUserAddinfo umsUserAddinfo) {
         //从mongodb中获取id
-        UmsUserAddinfo umsUserAddinfoFind = umsUserAddinfoMapper.findByUserId(umsUserAddinfo.getId());
+        UmsUserAddinfo umsUserAddinfoFind = umsUserAddinfoMapper.findByUserId(umsUserAddinfo.getUserId());
 
         //更新
         umsUserAddinfo.setId(umsUserAddinfoFind.getId());
@@ -355,7 +378,7 @@ public class UserService implements com.yjl.assemblycappsystem.service.UserServi
     @Override
     public UmsUserAddinfo getUserAddinfoByUserId(Integer userId) {
         //查询mongodb
-        UmsUserAddinfo userAddinfoFromDB = umsUserAddinfoMapper.findByUserId(String.valueOf(userId));
+        UmsUserAddinfo userAddinfoFromDB = umsUserAddinfoMapper.findByUserId(userId);
         if (userAddinfoFromDB == null){
             return null;
         }
@@ -556,6 +579,7 @@ public class UserService implements com.yjl.assemblycappsystem.service.UserServi
         }
         return "fail";
     }
+
 
 
 

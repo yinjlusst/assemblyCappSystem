@@ -19,6 +19,8 @@ public interface UserService {
 
     Integer addUser(UmsUserInfo umsUserInfo);
 
+    String addUsernameAndEmployeeId(UmsUserInfo umsUserInfo);
+
     String getHeadPortraitsUrlById(Integer Id, String defaultHeadPortraitsUrl);
 
     UmsUserAddinfo addUserAddinfo(UmsUserAddinfo umsUserAddinfo);
@@ -44,4 +46,7 @@ public interface UserService {
     String checkEmployeeId(UmsUserInfo umsUserInfo);
 
     String checkUsername(UmsUserInfo umsUserInfo);
+
+    void addHeadPortraitUrl(UmsUserInfo umsUserInfo,String url);
+
 }

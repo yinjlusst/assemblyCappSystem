@@ -2,6 +2,8 @@ package com.yjl.assemblycappsystem.passport.service.impl;
 
 import com.alibaba.dubbo.config.annotation.Service;
 import com.alibaba.fastjson.JSON;
+import com.yjl.assemblycappsystem.bean.UmsUserHeadPortraitUrl;
+import com.yjl.assemblycappsystem.passport.mapper.UmsUserHeadPortraitUrlMapper;
 import com.yjl.assemblycappsystem.util.ActiveMQUtil;
 import com.yjl.assemblycappsystem.util.RedisUtil;
 import com.yjl.assemblycappsystem.bean.UmsUserAddinfo;
@@ -29,10 +31,7 @@ import javax.jms.ConnectionFactory;
 import javax.jms.Session;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class UserService implements com.yjl.assemblycappsystem.service.UserService {
@@ -47,16 +46,15 @@ public class UserService implements com.yjl.assemblycappsystem.service.UserServi
     @Autowired
     ActiveMQUtil activeMQUtil;
     @Autowired
-    ConnectionFactory connectionFactory;
-    @Autowired
     JestClient jestClient;
-
-
-
-
+    @Autowired
+    UmsUserHeadPortraitUrlMapper umsUserHeadPortraitUrlMapper;
 
     /**
+     * 用户注册
      * 添加一个新的用户
+     * 用户信息（用户名、密码）只与mysql有关
+     * 把employeeId和username存入redis
      * @param umsUserInfo
      * @return
      */
@@ -64,114 +62,106 @@ public class UserService implements com.yjl.assemblycappsystem.service.UserServi
     public Integer addUser(UmsUserInfo umsUserInfo) {
         Jedis jedis = null;
         int i = umsUserInfoMapper.insertSelective(umsUserInfo);
-        System.out.println(i);
-        if (i > 0) {
-            try {
-                jedis = redisUtil.getJedis();
-
-                if (jedis != null) {
-
-                    jedis.setex("user:" + umsUserInfo.getUsername() + umsUserInfo.getPassword() + ":info", 60 * 60 * 24, JSON.toJSONString(umsUserInfo));
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-
-            } finally {
-                jedis.close();
-            }
-            return umsUserInfo.getId();
+        if (i <= 0) {
+            return -1;
         }
 
-        return -1;
+        //将username和employeeId分别存入redis
+        try {
+            jedis = redisUtil.getJedis();
+            if (jedis != null) {
+                jedis.sadd("all:username:set", umsUserInfo.getUsername());
+                jedis.sadd("all:employeeId:set", umsUserInfo.getEmployeeId());
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            jedis.close();
+        }
+        return i;
     }
+
+
     /**
      * 在ums_user_addinfo表中插入数据
      * 添加用户附加数据
+     * 存放在mongodb
      * @param umsUserAddinfo
      * @return
      */
     @Override
-    public Integer addUserAddinfo(UmsUserAddinfo umsUserAddinfo) {
-        Jedis jedis = null;
-        int i = umsUserAddinfoMapper.insertSelective(umsUserAddinfo);
-        System.out.println(i);
-        if (i > 0) {
-            //保存成功，在redis中也存一份
-            jedis = redisUtil.getJedis();
-            if (jedis != null) {
-                try {
-                    jedis.setex("user:" + umsUserAddinfo.getUserId() + ":addinfo", 60 * 60 * 24, JSON.toJSONString(umsUserAddinfo));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                } finally {
-                    jedis.close();
-                }
-            }
-            return umsUserAddinfo.getId();
+    public UmsUserAddinfo addUserAddinfo(UmsUserAddinfo umsUserAddinfo) {
+        UmsUserAddinfo insertUmsUserAddinfo = umsUserAddinfoMapper.insert(umsUserAddinfo);
+        if (insertUmsUserAddinfo == null) {
+            //保存失败
+            return null;
         }
-        return -1;
+        return insertUmsUserAddinfo;
     }
-
 
 
     /**
      * 从ums_user_info表中更新头像
+     * 头像信息存储在redis和mongodb中
      */
     @Override
-    public Integer renewHeadPortraitsUrl(UmsUserInfo umsUserInfo) {
+    public UmsUserHeadPortraitUrl renewHeadPortraitsUrl(UmsUserHeadPortraitUrl umsUserHeadPortraitUrl) {
         Jedis jedis = null;
-        //更新DB
-        //用example查询，example一般是和update一起用
-        Example example = new Example(UmsUserInfo.class);
-        example.createCriteria().andEqualTo("id", umsUserInfo.getId());//createCriteria()建立正则，property参数对应的是实体对象的属性，所以是驼峰
-        int i = umsUserInfoMapper.updateByExampleSelective(umsUserInfo, example);
 
+        //查找当前用户的id对应的数据库的id
+        UmsUserHeadPortraitUrl umsUserHeadPortraitUrlFind = umsUserHeadPortraitUrlMapper.findByUserId(umsUserHeadPortraitUrl.getUserId());
+        //更新mongoDB
+        umsUserHeadPortraitUrl.setId(umsUserHeadPortraitUrlFind.getId());
+        UmsUserHeadPortraitUrl umsHeadPortraitUrlUpdate = umsUserHeadPortraitUrlMapper.save(umsUserHeadPortraitUrl);
+
+        if (umsHeadPortraitUrlUpdate == null){
+            return null;
+        }
+        //更新redis
         try {
-            //更新缓存数据库
-            //这里没有更新user:username+password:info中的头像url的信息，觉得没有必要
             jedis = redisUtil.getJedis();
-            jedis.setex("user:" + umsUserInfo.getId() + ":headPortraitsUrl", 60 * 60 * 24, umsUserInfo.getHeadPortraitsUrl());
+            //头像保存2天
+            jedis.setex("user:" + umsHeadPortraitUrlUpdate.getUserId() + ":headPortraitsUrl", 60 * 60 * 24 * 2, umsHeadPortraitUrlUpdate.getHeadPortraitUrl());
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             jedis.close();
         }
-        return i;
+
+        return umsHeadPortraitUrlUpdate;
     }
+
+
     /**
      * 从ums_user_addinfo表中更新信息
+     * umsUserAddinfo存储在mongodb中
      * @param umsUserAddinfo
      * @return
      */
     @Override
-    public Integer renewUserAddinfo(UmsUserAddinfo umsUserAddinfo) {
-        Jedis jedis = null;
-        //更新DB
-        //用example更新，example一般是和update一起用
-        Example example = new Example(UmsUserAddinfo.class);
-        example.createCriteria().andEqualTo("userId", umsUserAddinfo.getUserId());//createCriteria()建立正则，property参数对应的是实体对象的属性，所以是驼峰
-        int i = umsUserAddinfoMapper.updateByExampleSelective(umsUserAddinfo, example);
-        try {
-            //更新缓存数据库
-            jedis = redisUtil.getJedis();
-            jedis.setex("user:" + umsUserAddinfo.getUserId() + ":addinfo", 60 * 60 * 24, JSON.toJSONString(umsUserAddinfo));
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            jedis.close();
+    public UmsUserAddinfo renewUserAddinfo(UmsUserAddinfo umsUserAddinfo) {
+        //从mongodb中获取id
+        UmsUserAddinfo umsUserAddinfoFind = umsUserAddinfoMapper.findByUserId(umsUserAddinfo.getId());
+
+        //更新
+        umsUserAddinfo.setId(umsUserAddinfoFind.getId());
+        UmsUserAddinfo umsUserAddinfoUpdate = umsUserAddinfoMapper.save(umsUserAddinfo);
+
+        if (umsUserAddinfoUpdate == null){
+            return null;
         }
-        return i;
+        return umsUserAddinfoUpdate;
+
     }
+
     /**
      * 更新UserInfo表中的信息
+     * 直接更新mysql
      * @param umsUserInfo
      */
     @Override
     public void renewUserLastLoginTime(UmsUserInfo umsUserInfo) {
-        Jedis jedis = null;
 
-        //更新DB
-        //用example进行更新
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         String nowDate = format.format(Calendar.getInstance().getTime());
         umsUserInfo.setLastLoginDate(nowDate);
@@ -179,27 +169,13 @@ public class UserService implements com.yjl.assemblycappsystem.service.UserServi
         example.createCriteria().andEqualTo("id", umsUserInfo.getId());//建立正则规则，添加条件
         umsUserInfoMapper.updateByExampleSelective(umsUserInfo, example);//第一个参数为修改的部分值组成的对象，其中有些属性为null则表示该项不修改，第二个参数为example
 
-        //获取用户对象，更新redis
-        List<UmsUserInfo> umsUserInfos = umsUserInfoMapper.selectByExample(example);
-        umsUserInfo = umsUserInfos.get(0);
-
-        //更新redis缓存
-        try {
-            jedis = redisUtil.getJedis();
-            jedis.setex("user:" + umsUserInfo.getUsername() + umsUserInfo.getPassword() + ":info", 60 * 60 * 24, JSON.toJSONString(umsUserInfo));
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            jedis.close();
-        }
-
         //新建消息队列发送登录通知邮件
         Connection connection = null;
         Session session = null;
         try {
             //创建session和connection
             //1.建立连接
-            connection = connectionFactory.createConnection();
+            connection = activeMQUtil.getConnection();
             connection.start();
             session = connection.createSession(true, 0);
             activeMQUtil.sendText(session,umsUserInfo.getEmail(),"SEND_LOGINNOTE_QUEUE");
@@ -222,25 +198,26 @@ public class UserService implements com.yjl.assemblycappsystem.service.UserServi
         }
     }
 
+
     /**
      * 使用消息中间件发送消息
-     * 更新数据库上次登录时间
+     * 更新mysql数据库上次登录时间
      * 发送邮件给用户通知上线
      * 发送短信给用户校验
      * @param idStr
      */
     @Override
     public void renewLoginStatus(String idStr) {
-
         Connection connection = null;
         Session session = null;
         try {
             //创建session和connection
-            //1.建立连接
-            connection = connectionFactory.createConnection();
+            //1.建立连接,从连接池获取
+            connection = activeMQUtil.getConnection();
             connection.start();
             session = connection.createSession(true, 0);
             activeMQUtil.sendText(session,idStr,"UPDATE_LASTLOGINDATE_QUEUE");
+
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -266,38 +243,29 @@ public class UserService implements com.yjl.assemblycappsystem.service.UserServi
      * 通过id查找头像
      * 如果找到头像返回头像url
      * 如果没找到头像返回默认值defaultHeadPortraitUrl
+     * 使用mongodb+redis的存储
      */
     @Override
-    public String getHeadPortraitsUrlById(Integer id, String defaultHeadPortraitsUrl) {
+    public String getHeadPortraitsUrlById(Integer userId, String defaultHeadPortraitsUrl) {
         //先从redis中找，key为user:id:headPortraitUrl
-        //  找到
-        //      返回
-        //  没找到
-        //      从sql中找
-        //          找到
-        //              更新redis
-        //          没找到
-        //              返回默认值defaultHeadPortraitsUrl
-
-
         Jedis jedis = null;
         try {
             jedis = redisUtil.getJedis();
-            String headPortraitsUrlFromCache = jedis.get("user:" + id + ":headPortraitsUrl");
+            String headPortraitsUrlFromCache = jedis.get("user:" + userId + ":headPortraitsUrl");
             if (StringUtils.isNotBlank(headPortraitsUrlFromCache)) {
                 //redis中找到了
-
                 return headPortraitsUrlFromCache;
             } else {
-                //redis中没有，查找sql
-                UmsUserInfo umsUserInfoFromDB = umsUserInfoMapper.selectByPrimaryKey(id);
-                String headPortraitsUrlFromDB = umsUserInfoFromDB.getHeadPortraitsUrl();
-                if (StringUtils.isNotBlank(headPortraitsUrlFromDB)) {
+                //redis中没有，查找mongodb
+                UmsUserHeadPortraitUrl umsUserHeadPortraitUrlFind = umsUserHeadPortraitUrlMapper.findByUserId(userId);
+
+                String headPortraitsUrl = umsUserHeadPortraitUrlFind.getHeadPortraitUrl();
+                if (StringUtils.isNotBlank(headPortraitsUrl)) {
                     //放入redis
-                    jedis.setex("user:" + id + ":headPortraitsUrl", 60 * 60 * 24, headPortraitsUrlFromDB);
-                    return headPortraitsUrlFromDB;
+                    jedis.setex("user:" + userId + ":headPortraitsUrl", 60 * 60 * 24, headPortraitsUrl);
+                    return headPortraitsUrl;
                 } else {
-                    jedis.setex("user:" + id + ":headPortraitsUrl", 60 * 60 * 24, defaultHeadPortraitsUrl);
+                    jedis.setex("user:" + userId + ":headPortraitsUrl", 60 * 60 * 24, defaultHeadPortraitsUrl);
                     return defaultHeadPortraitsUrl;
                 }
             }
@@ -309,8 +277,10 @@ public class UserService implements com.yjl.assemblycappsystem.service.UserServi
         return defaultHeadPortraitsUrl;
     }
 
+
     /**
-     *通过员工号employeeId模糊查询
+     * 通过员工号employeeId模糊查询
+     * 查询mysql中的信息
      */
     @Override
     public List<UmsUserSearchInfo> getUserByFuzzyEmployeeId(UmsUserSearchInfo umsUserSearchInfo) {
@@ -328,21 +298,11 @@ public class UserService implements com.yjl.assemblycappsystem.service.UserServi
         return umsUserSearchInfos;
     }
 
-    /**
-     * 通过某一个条件模糊查询umsuserinfo表
-     * 参数2为字段名
-     * 参数3为字段所对应的值
-     */
-    public List<UmsUserInfo> fuzzySelect(UmsUserInfo umsUserInfo,String field,String value){
-        Example e = new Example(UmsUserInfo.class);
-        e.createCriteria().andLike(field,"%" + value + "%");
-        List<UmsUserInfo> umsUserInfoList = umsUserInfoMapper.selectByExample(e);
-        return umsUserInfoList;
-    }
 
 
     /**
      *通过用户名username模糊查询
+     * 查询mysql中的信息
      */
     @Override
     public List<UmsUserSearchInfo> getUserByFuzzyUsername(UmsUserSearchInfo umsUserSearchInfo) {
@@ -361,59 +321,45 @@ public class UserService implements com.yjl.assemblycappsystem.service.UserServi
         return umsUserSearchInfos;
     }
 
+
+    /**
+     * 通过某一个条件模糊查询umsUserInfo表
+     * 参数2为字段名
+     * 参数3为字段所对应的值
+     */
+    public List<UmsUserInfo> fuzzySelect(UmsUserInfo umsUserInfo,String field,String value){
+        Example e = new Example(UmsUserInfo.class);
+        e.createCriteria().andLike(field,"%" + value + "%");
+        List<UmsUserInfo> umsUserInfoList = umsUserInfoMapper.selectByExample(e);
+        return umsUserInfoList;
+    }
+
+
     /**
      * 按照条件精准查找某一个User
      */
     @Override
     public UmsUserInfo getUser(UmsUserInfo umsUserInfo) {
-
-
         UmsUserInfo umsUserInfoFromDB = umsUserInfoMapper.selectOne(umsUserInfo);
         if (umsUserInfoFromDB == null) {
-            umsUserInfoFromDB = new UmsUserInfo();
-            umsUserInfoFromDB.setId(-1);
+            return null;
         }
-
         return umsUserInfoFromDB;
-
     }
+
 
     /**
      * 在ums_user_addinfo表中按照用户id查找用户附加数据
+     * ums_user_info只使用mongodb存储
      */
     @Override
-    public UmsUserAddinfo getUserAddinfoByUserId(int userId) {
-        Jedis jedis = null;
-        try {
-            //从redis中查询用户
-            jedis = redisUtil.getJedis();
-            String userAddinfoStr = jedis.get("user:" + userId + ":addinfo");
-            if (StringUtils.isNotBlank(userAddinfoStr)) {
-                //redis中找到了
-                UmsUserAddinfo userAddinfoFromCache = JSON.parseObject(userAddinfoStr, UmsUserAddinfo.class);
-                return userAddinfoFromCache;
-            } else {
-                //redis中没有查到，查询sql
-                UmsUserAddinfo umsUserAddinfo = new UmsUserAddinfo();
-                umsUserAddinfo.setUserId(userId);
-                UmsUserAddinfo userAddinfoFromDB = umsUserAddinfoMapper.selectOne(umsUserAddinfo);
-                if (userAddinfoFromDB != null) {
-                    //mysql中找到了
-                    //放入redis
-                    jedis.setex("user:" + userId + ":addinfo", 60 * 60 * 24, JSON.toJSONString(userAddinfoFromDB));
-                    return userAddinfoFromDB;
-                } else {
-                    //mysql中没找到
-                    jedis.setex("user:" + userId + ":addinfo", 5, JSON.toJSONString(""));
-                    return null;
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            jedis.close();
+    public UmsUserAddinfo getUserAddinfoByUserId(Integer userId) {
+        //查询mongodb
+        UmsUserAddinfo userAddinfoFromDB = umsUserAddinfoMapper.findByUserId(String.valueOf(userId));
+        if (userAddinfoFromDB == null){
+            return null;
         }
-        return null;
+        return userAddinfoFromDB;
     }
 
 
@@ -476,15 +422,12 @@ public class UserService implements com.yjl.assemblycappsystem.service.UserServi
 
 
     /**
-     * 从redis中按照用户名和密码查询用户
-     * redis中没有的从mysql中查询，再存入redis
-     * 如果都没查到说明用户名密码错误，返回null
-     *
+     * 验证登录
+     * 使用redis+mysql
      * @param umsUserInfo 里面包含用户的用户名和密码
      * @return 返回用户的信息
      */
-    @Override
-    public UmsUserInfo checkUserNamePassword(UmsUserInfo umsUserInfo) {
+    public UmsUserInfo checkUserNamePasswordByRedis(UmsUserInfo umsUserInfo) {
         Jedis jedis = null;
         RLock lock = redissonClient.getLock("lock");
         //从redis中获取用户信息
@@ -532,7 +475,6 @@ public class UserService implements com.yjl.assemblycappsystem.service.UserServi
                         return null;
                     }
                 }
-
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -541,6 +483,78 @@ public class UserService implements com.yjl.assemblycappsystem.service.UserServi
             lock.unlock();
         }
         return null;
+    }
+
+    /**
+     * 验证登录
+     * 只是用mysql
+     * @param umsUserInfo 里面包含用户的用户名和密码
+     * @return 返回用户的信息
+     */
+    @Override
+    public UmsUserInfo checkUserNamePassword(UmsUserInfo umsUserInfo) {
+        UmsUserInfo umsUserInfoSel = new UmsUserInfo();
+        umsUserInfoSel.setUsername(umsUserInfo.getUsername());
+        umsUserInfoSel.setPassword(umsUserInfo.getPassword());
+        UmsUserInfo umsUserInfoFromDB = umsUserInfoMapper.selectOne(umsUserInfoSel);
+        if (umsUserInfoFromDB == null){
+            return null;
+        }else{
+            return umsUserInfoFromDB;
+        }
+    }
+
+    /**
+     * 验证工号是否使用过
+     * 使用mysql+redis
+     * @param umsUserInfo
+     * @return
+     */
+    @Override
+    public String checkEmployeeId(UmsUserInfo umsUserInfo) {
+        Jedis jedis = null;
+
+        try {
+            jedis = redisUtil.getJedis();
+            Set<String> usernames = jedis.smembers("all:employeeId:set");
+            if (usernames.contains(umsUserInfo.getUsername())){
+                return "fail";
+            }
+            else {
+                return "success";
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            jedis.close();
+        }
+        return "fail";
+    }
+
+    /**
+     * 验证用户名是否使用过
+     * 使用mysql+redis
+     * @param umsUserInfo
+     * @return
+     */
+    @Override
+    public String checkUsername(UmsUserInfo umsUserInfo) {
+        Jedis jedis = null;
+        try {
+            jedis = redisUtil.getJedis();
+            Set<String> usernames = jedis.smembers("all:username:set");
+            if (usernames.contains(umsUserInfo.getUsername())){
+                return "fail";
+            }
+            else {
+                return "success";
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            jedis.close();
+        }
+        return "fail";
     }
 
 
@@ -604,9 +618,6 @@ public class UserService implements com.yjl.assemblycappsystem.service.UserServi
             TermQueryBuilder termQueryBuilder = new TermQueryBuilder("username",username);
             boolQueryBuilder.filter(termQueryBuilder);
         }
-
-
-
 
         //query
         searchSourceBuilder.query(boolQueryBuilder);

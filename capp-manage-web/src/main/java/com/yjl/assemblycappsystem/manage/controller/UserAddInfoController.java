@@ -3,6 +3,7 @@ package com.yjl.assemblycappsystem.manage.controller;
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.alibaba.fastjson.JSON;
 import com.yjl.assemblycappsystem.bean.UmsUserAddinfo;
+import com.yjl.assemblycappsystem.bean.UmsUserHeadPortraitUrl;
 import com.yjl.assemblycappsystem.bean.UmsUserInfo;
 import com.yjl.assemblycappsystem.service.UserService;
 import com.yjl.assemblycappsystem.util.FastdfsUtil;
@@ -84,39 +85,38 @@ public class UserAddInfoController {
      */
     @ResponseBody
     @RequestMapping("renewUserInfo")
-    public String renewUserInfo(@RequestBody UmsUserAddinfo umsUserAddinfo){
-        //String username = (String) request.getAttribute("username");
-        //String idStr = (String) request.getAttribute("id");
-        String username = "yinjianliang";
-        String idStr = "8";
+    public String renewUserInfo(@RequestBody UmsUserAddinfo umsUserAddinfo,HttpServletRequest request){
+        String username = (String) request.getAttribute("username");
+        String idStr = (String) request.getAttribute("id");
+
         Integer uid = Integer.parseInt(idStr);
         umsUserAddinfo.setUserId(uid);
+
 
         //检测数据是否有效
         if (umsUserAddinfo.getIntroduce().length()>=250 && umsUserAddinfo.getQQ().length()>=15 && umsUserAddinfo.getWeibo().length()>=25){
             return "fail";
         }
-        else {
-            if (StringUtils.isNotBlank(umsUserAddinfo.getHeadPortraitsUrl()) && umsUserAddinfo.getHeadPortraitsUrl().length()>3){
-                //只有用户更新了头像才有必要更新
-                UmsUserInfo umsUserInfo = new UmsUserInfo();
-                umsUserInfo.setHeadPortraitsUrl(umsUserAddinfo.getHeadPortraitsUrl());
-                umsUserInfo.setId(uid);
-                Integer renewId = userService.renewHeadPortraitsUrl(umsUserInfo);
-                if (renewId<=0){
-                    //头像更新失败
-                    return "fail";
-                }
-            }
-
-
-            //更新附加信息
-            Integer renewId = userService.renewUserAddinfo(umsUserAddinfo);
-            if (renewId>0){
-                return "success";
+        if (StringUtils.isNotBlank(umsUserAddinfo.getHeadPortraitsUrl()) && umsUserAddinfo.getHeadPortraitsUrl().length()>3){
+            //只有用户更新了头像才有必要更新
+            UmsUserHeadPortraitUrl umsUserHeadPortraitUrl = new UmsUserHeadPortraitUrl();
+            umsUserHeadPortraitUrl.setUserId(uid);
+            umsUserHeadPortraitUrl.setHeadPortraitUrl(umsUserAddinfo.getHeadPortraitsUrl());
+            UmsUserHeadPortraitUrl umsUserHeadPortraitUrl1 = userService.renewHeadPortraitsUrl(umsUserHeadPortraitUrl);
+            if ( umsUserHeadPortraitUrl1  == null){
+                //头像更新失败
             }
         }
-        return "fail";
+
+
+
+        //更新附加信息
+        UmsUserAddinfo umsUserAddinfo1 = userService.renewUserAddinfo(umsUserAddinfo);
+        if (umsUserAddinfo1 == null){
+            return "fail";
+        }
+
+        return "success";
 
     }
 }

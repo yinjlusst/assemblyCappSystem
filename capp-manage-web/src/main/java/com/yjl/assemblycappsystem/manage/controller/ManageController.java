@@ -37,10 +37,8 @@ public class ManageController {
     @RequestMapping("getUserInfo")
     @ResponseBody
     public String getUserInfo(HttpServletRequest request){
-        //String username = (String) request.getAttribute("username");
-        //String idStr = (String) request.getAttribute("id");
-        String username = "yinjianliang";
-        String idStr = "8";
+        String username = (String) request.getAttribute("username");
+        String idStr = (String) request.getAttribute("id");
         String headPortraitsUrl = userService.getHeadPortraitsUrlById(Integer.parseInt(idStr), WebConstans.defaultHeadPortraitsUrl);
         if (StringUtils.isBlank(headPortraitsUrl)){
             headPortraitsUrl = WebConstans.defaultHeadPortraitsUrl;

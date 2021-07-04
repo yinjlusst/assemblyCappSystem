@@ -93,7 +93,7 @@ public class DocumentService implements com.yjl.assemblycappsystem.service.Docum
                 //1.建立连接
                 connection = connectionFactory.createConnection();
                 connection.start();
-                session = connection.createSession(true, 0);
+                session = connection.createSession(true, Session.AUTO_ACKNOWLEDGE);
                 activeMQUtil.sendText(session,dmsModuleDocument.getUrl() + "&" + dmsModuleDocument.getId(),"PARSE_MODULE_DOCUMENT_QUEUE");
             } catch (Exception e) {
                 e.printStackTrace();
@@ -114,8 +114,6 @@ public class DocumentService implements com.yjl.assemblycappsystem.service.Docum
         }
         return "fail";
     }
-
-
 
     /**
      * 向数据库中保存上传了工艺的文件的数据
@@ -143,7 +141,7 @@ public class DocumentService implements com.yjl.assemblycappsystem.service.Docum
                     //1.建立连接
                     connection = connectionFactory.createConnection();
                     connection.start();
-                    session = connection.createSession(true, 0);
+                    session = connection.createSession(true, Session.AUTO_ACKNOWLEDGE);
                     activeMQUtil.sendText(session, dmsProcessDocument.getUrl()+ "&" +dmsProcessDocument.getId(),"PARSE_PROCESS_DOCUMENT_QUEUE");
 
                 } catch (Exception e) {

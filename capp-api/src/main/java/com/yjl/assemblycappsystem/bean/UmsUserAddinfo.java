@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 public class UmsUserAddinfo implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private String id;
     private String qq;
     private String weibo;
     private String introduce;
@@ -33,11 +33,11 @@ public class UmsUserAddinfo implements Serializable {
         this.userId = userId;
     }
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 

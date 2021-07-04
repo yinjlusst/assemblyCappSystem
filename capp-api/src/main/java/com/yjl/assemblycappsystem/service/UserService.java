@@ -3,6 +3,7 @@ package com.yjl.assemblycappsystem.service;
 
 
 import com.yjl.assemblycappsystem.bean.UmsUserAddinfo;
+import com.yjl.assemblycappsystem.bean.UmsUserHeadPortraitUrl;
 import com.yjl.assemblycappsystem.bean.UmsUserInfo;
 import com.yjl.assemblycappsystem.bean.UmsUserSearchInfo;
 
@@ -20,13 +21,13 @@ public interface UserService {
 
     String getHeadPortraitsUrlById(Integer Id, String defaultHeadPortraitsUrl);
 
-    Integer addUserAddinfo(UmsUserAddinfo umsUserAddinfo);
+    UmsUserAddinfo addUserAddinfo(UmsUserAddinfo umsUserAddinfo);
 
-    UmsUserAddinfo getUserAddinfoByUserId(int userId);
+    UmsUserAddinfo getUserAddinfoByUserId(Integer userId);
 
-    Integer renewHeadPortraitsUrl(UmsUserInfo umsUserInfo);
+    UmsUserHeadPortraitUrl renewHeadPortraitsUrl(UmsUserHeadPortraitUrl umsUserHeadPortraitUrl);
 
-    Integer renewUserAddinfo(UmsUserAddinfo umsUserAddinfo);
+    UmsUserAddinfo renewUserAddinfo(UmsUserAddinfo umsUserAddinfo);
 
     void renewUserLastLoginTime(UmsUserInfo umsUserInfo);
 
@@ -40,4 +41,7 @@ public interface UserService {
 
     List<UmsUserSearchInfo> getUserByFuzzyEmployeeId(UmsUserSearchInfo umsUserSearchInfo);
 
+    String checkEmployeeId(UmsUserInfo umsUserInfo);
+
+    String checkUsername(UmsUserInfo umsUserInfo);
 }

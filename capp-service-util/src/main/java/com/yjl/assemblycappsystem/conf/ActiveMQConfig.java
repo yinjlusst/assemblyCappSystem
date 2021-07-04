@@ -2,6 +2,7 @@ package com.yjl.assemblycappsystem.conf;
 
 import com.yjl.assemblycappsystem.util.ActiveMQUtil;
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.activemq.pool.PooledConnectionFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,13 +20,6 @@ public class ActiveMQConfig {
     @Value("${activemq.listener.enable:disabled}")
     String listenerEnable;
 
-
-    @Bean
-    public ConnectionFactory connectionFactory(){
-        return new ActiveMQConnectionFactory(brokerURL);
-    }
-
-
     @Bean
     public ActiveMQUtil getActiveMQUtil() throws JMSException {
         if(brokerURL.equals("disabled")){
@@ -33,7 +27,7 @@ public class ActiveMQConfig {
         }
         ActiveMQUtil activeMQUtil=new ActiveMQUtil();
         activeMQUtil.init(brokerURL);
-        return  activeMQUtil;
+        return activeMQUtil;
     }
 
     //定义一个消息监听器连接工厂，这里定义的是点对点模式的监听器连接工厂

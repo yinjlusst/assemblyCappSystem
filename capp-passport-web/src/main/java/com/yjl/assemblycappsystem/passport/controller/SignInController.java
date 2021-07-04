@@ -36,6 +36,7 @@ public class SignInController {
 
     /**
      * 校验umsUserInfo的用户名是否重复
+     * redis存储所有当前的username
      * @param umsUserInfo
      * @return
      */
@@ -47,18 +48,9 @@ public class SignInController {
         if (umsUserInfo == null || StringUtils.isBlank(umsUserInfo.getUsername())){
             return returnStr;
         }
-
         //交给userService查看是否这个username已经使用
-        UmsUserInfo userInfoFromDB = userService.getUser(umsUserInfo);
-
-        if (userInfoFromDB.getId() == -1){
-            returnStr = "success";
-        }
-        else {
-            returnStr = "fail";
-        }
+        returnStr = userService.checkUsername(umsUserInfo);
         return returnStr;
-
     }
 
 
@@ -71,15 +63,12 @@ public class SignInController {
     @LoginRequired
     @ResponseBody
     public String checkEmployeeId(@RequestBody UmsUserInfo umsUserInfo){
+        String returnStr = "fail";
         if (umsUserInfo == null || StringUtils.isBlank(umsUserInfo.getEmployeeId())){
             return "fail";
         }
-
-        UmsUserInfo userInfoFromDB = userService.getUser(umsUserInfo);
-        if (userInfoFromDB.getId() == -1){
-            return "success";
-        }
-        return "fail";
+        returnStr = userService.checkEmployeeId(umsUserInfo);
+        return returnStr;
     }
 
 
@@ -102,16 +91,15 @@ public class SignInController {
         if (username.length()<6 || username.length()>14 || employeeId.length() != 7){
             return "fail";
         }
-        UmsUserInfo userByUsername = userService.getUser(umsUserInfo);
-        UmsUserInfo userByEmployeeId = userService.getUser(umsUserInfo);
+        String checkUsername = userService.checkUsername(umsUserInfo);
+        String checkEmployeeId = userService.checkEmployeeId(umsUserInfo);
 
-        if (!(userByUsername.getId() == -1 && userByEmployeeId.getId() == -1)){
+        if (checkUsername.equals("fail")|| checkEmployeeId.equals("fail")){
             return "fail";
         }
 
         //校验成功，将用户信息存入数据库
         Integer saveUserId = -1;
-
 
         //将密码哈希加密,采用sha256+salt
         //随机salt盐值
@@ -128,15 +116,16 @@ public class SignInController {
 
         //保存
         saveUserId = userService.addUser(umsUserInfo);
+
         if (saveUserId != -1 ){
             UmsUserAddinfo umsUserAddinfo = new UmsUserAddinfo();
             umsUserAddinfo.setUserId(saveUserId);
-            Integer userAddInfoId = userService.addUserAddinfo(umsUserAddinfo);
-            if (userAddInfoId != -1){
-                return "success";
+            UmsUserAddinfo umsUserAddinfo1 = userService.addUserAddinfo(umsUserAddinfo);
+            if (umsUserAddinfo1 == null ){
+                return "fail";
             }
             else {
-                return "fail";
+                return "success";
             }
 
         }else {
